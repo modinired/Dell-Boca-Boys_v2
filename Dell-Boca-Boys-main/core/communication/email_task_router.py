@@ -328,7 +328,7 @@ class EmailTaskRouter:
         if self._cesar_network:
             self.logger.info(f"Routing analysis task to CESAR network: {task.description[:50]}...")
 
-            # Analysis tasks typically involve Victoria (Strategic) and Terry (Quantitative)
+            # Analysis tasks: Chiccki coordinates, Arthur analyzes patterns, Giancarlo provides technical analysis
             response = await self._cesar_network.process_collaborative_task(
                 task={
                     "type": "analysis",
@@ -336,8 +336,8 @@ class EmailTaskRouter:
                     "priority": task.priority.name
                 },
                 collaboration_mode="consultation",
-                lead_agent="victoria_sterling",
-                contributing_agents=["terry_delmonaco", "eleanor_blackwood"]
+                lead_agent="chiccki_cammarano",
+                contributing_agents=["arthur_dunzarelli", "giancarlo_saltimbocca"]
             )
             return response
         else:
@@ -348,7 +348,7 @@ class EmailTaskRouter:
         if self._cesar_network:
             self.logger.info(f"Routing coding task to CESAR network: {task.description[:50]}...")
 
-            # Coding tasks go to Terry (Technical) and Marcus (Architecture)
+            # Coding tasks: Giancarlo writes code, Collogero designs flow, Gerry validates
             response = await self._cesar_network.process_collaborative_task(
                 task={
                     "type": "coding",
@@ -356,8 +356,8 @@ class EmailTaskRouter:
                     "priority": task.priority.name
                 },
                 collaboration_mode="consultation",
-                lead_agent="terry_delmonaco",
-                contributing_agents=["marcus_chen", "isabella_rodriguez"]
+                lead_agent="giancarlo_saltimbocca",
+                contributing_agents=["collogero_aspertuno", "gerry_nascondino"]
             )
             return response
         else:
@@ -368,7 +368,7 @@ class EmailTaskRouter:
         if self._cesar_network:
             self.logger.info(f"Routing research task to CESAR network: {task.description[:50]}...")
 
-            # Research tasks go to Eleanor (Academic) and Victoria (Strategic)
+            # Research tasks: Arthur analyzes patterns/docs, Chiccki coordinates, Collogero structures
             response = await self._cesar_network.process_collaborative_task(
                 task={
                     "type": "research",
@@ -376,8 +376,8 @@ class EmailTaskRouter:
                     "priority": task.priority.name
                 },
                 collaboration_mode="consultation",
-                lead_agent="eleanor_blackwood",
-                contributing_agents=["victoria_sterling", "marcus_chen"]
+                lead_agent="arthur_dunzarelli",
+                contributing_agents=["chiccki_cammarano", "collogero_aspertuno"]
             )
             return response
         else:
@@ -388,7 +388,7 @@ class EmailTaskRouter:
         if self._cesar_network:
             self.logger.info(f"Routing planning task to CESAR network: {task.description[:50]}...")
 
-            # Planning tasks go to James (Project Command) and Victoria (Strategic)
+            # Planning tasks: Collogero plans flow, Chiccki coordinates, Gerry validates plan
             response = await self._cesar_network.process_collaborative_task(
                 task={
                     "type": "planning",
@@ -396,8 +396,8 @@ class EmailTaskRouter:
                     "priority": task.priority.name
                 },
                 collaboration_mode="consultation",
-                lead_agent="james_oconnor",
-                contributing_agents=["victoria_sterling", "marcus_chen"]
+                lead_agent="collogero_aspertuno",
+                contributing_agents=["chiccki_cammarano", "gerry_nascondino"]
             )
             return response
         else:
@@ -408,7 +408,7 @@ class EmailTaskRouter:
         if self._cesar_network:
             self.logger.info(f"Routing review task to CESAR network: {task.description[:50]}...")
 
-            # Review tasks involve multiple agents for thorough evaluation
+            # Review tasks: Gerry leads QA, Arthur reviews patterns, Giancarlo checks code, Collogero validates flow
             response = await self._cesar_network.process_collaborative_task(
                 task={
                     "type": "review",
@@ -416,8 +416,8 @@ class EmailTaskRouter:
                     "priority": task.priority.name
                 },
                 collaboration_mode="committee",
-                lead_agent="james_oconnor",
-                contributing_agents=["terry_delmonaco", "eleanor_blackwood", "marcus_chen"]
+                lead_agent="gerry_nascondino",
+                contributing_agents=["arthur_dunzarelli", "giancarlo_saltimbocca", "collogero_aspertuno"]
             )
             return response
         else:
