@@ -1,0 +1,339 @@
+# Dell Boca Boys V2 - Hybrid LLM Configuration
+# Collaborative learning between Gemini (cloud) and Qwen2.5 (local)
+
+llm_architecture:
+  mode: "hybrid_collaborative"  # hybrid_collaborative, local_only, cloud_only
+
+  # Primary LLMs
+  models:
+    # Google Gemini (Cloud) - For complex reasoning and learning source
+    gemini:
+      enabled: true
+      provider: "google"
+      model: "gemini-2.0-flash-exp"  # Latest Gemini model
+      api_key_env: "GOOGLE_API_KEY"
+      endpoint: "https://generativelanguage.googleapis.com/v1"
+      use_cases:
+        - "complex_reasoning"
+        - "code_generation"
+        - "workflow_design"
+        - "learning_teacher"  # Teaches local model
+      max_tokens: 8192
+      temperature: 0.7
+      top_p: 0.95
+
+    # Qwen2.5 Coder (Local) - For fast execution and continuous learning
+    qwen_local:
+      enabled: true
+      provider: "vllm"
+      model: "Qwen/Qwen2.5-Coder-32B-Instruct-AWQ"  # Coder variant
+      endpoint: "http://vllm:8000/v1"
+      use_cases:
+        - "code_execution"
+        - "fast_inference"
+        - "workflow_compilation"
+        - "learning_student"  # Learns from Gemini
+      max_tokens: 4096
+      temperature: 0.1  # Lower for deterministic code
+      top_p: 0.9
+
+# Collaborative Learning Configuration
+collaborative_learning:
+  enabled: true
+
+  # Learning Strategy
+  strategy: "distillation_with_feedback"
+
+  # When to use each model
+  routing:
+    # Route to Gemini for these tasks
+    use_gemini_for:
+      - task_type: "complex_workflow_design"
+        threshold_complexity: 0.7
+      - task_type: "new_pattern_learning"
+        when: "pattern_not_in_local_kb"
+      - task_type: "error_correction"
+        when: "local_model_failed"
+      - task_type: "monthly_learning_session"
+        schedule: "0 2 1 * *"  # 2 AM on 1st of each month
+
+    # Route to local Qwen for these tasks
+    use_local_for:
+      - task_type: "standard_workflow_compilation"
+      - task_type: "known_pattern_execution"
+      - task_type: "fast_response_required"
+      - task_type: "offline_mode"
+
+  # Knowledge Transfer Process
+  knowledge_transfer:
+    # Capture Gemini interactions for learning
+    capture_interactions:
+      enabled: true
+      capture_rate: 1.0  # Capture 100% of Gemini interactions
+      storage: "postgresql"
+      table: "llm_learning_interactions"
+
+    # Create training examples from Gemini
+    generate_training_data:
+      enabled: true
+      format: "instruction_tuning"  # Format for Qwen fine-tuning
+      quality_threshold: 0.8  # Only use high-quality examples
+      max_examples_per_day: 100
+
+    # Fine-tune local model periodically
+    fine_tuning:
+      enabled: true
+      method: "lora"  # LoRA for efficient fine-tuning
+      schedule: "weekly"  # Fine-tune every week
+      epochs: 3
+      learning_rate: 0.0001
+      batch_size: 4
+
+    # Validate improvements
+    validation:
+      enabled: true
+      test_set_size: 100
+      success_criteria:
+        min_accuracy_improvement: 0.02  # 2% improvement required
+        max_performance_degradation: 0.01  # Max 1% slower
+
+# Dual Execution for Learning
+dual_execution:
+  enabled: true
+
+  # Execute with both models for comparison
+  when_to_dual_execute:
+    - scenario: "new_workflow_type"
+      frequency: "always"
+    - scenario: "learning_mode"
+      frequency: "10%"  # 10% of requests
+    - scenario: "validation"
+      schedule: "daily"
+
+  # Compare outputs and learn from differences
+  comparison:
+    enabled: true
+    metrics:
+      - "output_quality"
+      - "execution_speed"
+      - "error_rate"
+      - "user_satisfaction"
+
+  # Feedback loop
+  feedback:
+    # When Gemini performs better, learn from it
+    on_gemini_better:
+      - "capture_interaction"
+      - "add_to_training_data"
+      - "flag_for_review"
+
+    # When local performs better, validate and reinforce
+    on_local_better:
+      - "validate_result"
+      - "reinforce_pattern"
+      - "consider_reducing_gemini_usage"
+
+# Learning Sessions
+learning_sessions:
+  # Scheduled learning from Gemini
+  scheduled:
+    - name: "weekly_pattern_review"
+      frequency: "weekly"
+      day: "sunday"
+      time: "02:00"
+      duration_hours: 2
+      tasks:
+        - "review_new_n8n_patterns"
+        - "update_workflow_templates"
+        - "generate_training_examples"
+
+    - name: "monthly_comprehensive_training"
+      frequency: "monthly"
+      day: 1
+      time: "02:00"
+      duration_hours: 6
+      tasks:
+        - "full_knowledge_base_refresh"
+        - "fine_tune_local_model"
+        - "validate_improvements"
+        - "update_documentation"
+
+  # Interactive learning during usage
+  continuous:
+    enabled: true
+
+    # Learn from user corrections
+    from_user_feedback:
+      enabled: true
+      weight: 1.0  # High weight for user corrections
+
+    # Learn from successful executions
+    from_success:
+      enabled: true
+      weight: 0.5  # Medium weight
+
+    # Learn from failures (important!)
+    from_failures:
+      enabled: true
+      weight: 0.8  # High weight - failures are learning opportunities
+
+# Cost Optimization
+cost_optimization:
+  # Balance between Gemini cost and local inference
+  enabled: true
+
+  # Budget controls
+  budget:
+    max_monthly_gemini_cost: 100.00  # USD
+    currency: "USD"
+    alert_threshold: 0.8  # Alert at 80% of budget
+
+  # Smart routing to minimize costs
+  routing_strategy:
+    # Use local model first when possible
+    prefer_local: true
+
+    # Fallback to Gemini when needed
+    fallback_to_gemini:
+      - when: "local_confidence_low"
+        confidence_threshold: 0.7
+      - when: "local_error"
+      - when: "user_requests_best_quality"
+
+    # Cache Gemini responses
+    cache_gemini_responses:
+      enabled: true
+      ttl_hours: 168  # 1 week
+      max_cache_size_mb: 1000
+
+# Monitoring and Analytics
+monitoring:
+  enabled: true
+
+  # Track model performance
+  metrics:
+    - "response_time"
+    - "accuracy"
+    - "user_satisfaction"
+    - "cost_per_request"
+    - "learning_progress"
+    - "knowledge_retention"
+
+  # Dashboards
+  dashboards:
+    - name: "llm_performance"
+      metrics:
+        - "gemini_vs_local_comparison"
+        - "learning_curve"
+        - "cost_analysis"
+
+    - name: "learning_progress"
+      metrics:
+        - "training_examples_collected"
+        - "fine_tuning_results"
+        - "performance_improvements"
+
+  # Alerts
+  alerts:
+    - condition: "local_model_degradation"
+      threshold: 0.05  # 5% degradation
+      action: "pause_fine_tuning"
+
+    - condition: "high_gemini_usage"
+      threshold: 0.8  # 80% of budget
+      action: "increase_local_preference"
+
+    - condition: "learning_stagnation"
+      threshold_days: 30  # No improvement in 30 days
+      action: "review_learning_strategy"
+
+# Knowledge Base Integration
+knowledge_base:
+  # Vector store for learned patterns
+  vector_store:
+    provider: "pgvector"
+    dimension: 768
+    similarity_metric: "cosine"
+
+  # Separate collections for different sources
+  collections:
+    - name: "gemini_learned_patterns"
+      description: "Patterns learned from Gemini interactions"
+
+    - name: "local_successful_patterns"
+      description: "Patterns successfully executed locally"
+
+    - name: "user_corrections"
+      description: "User feedback and corrections"
+
+  # Knowledge synthesis
+  synthesis:
+    enabled: true
+    # Combine Gemini insights with local patterns
+    merge_strategy: "weighted_average"
+    weights:
+      gemini: 0.6  # Higher weight for Gemini initially
+      local: 0.3
+      user_feedback: 0.1
+
+# Deployment Configuration
+deployment:
+  # GPU allocation
+  gpu:
+    enabled: true
+    allocation:
+      qwen_local: "0.8"  # 80% GPU for local model
+      other_services: "0.2"
+
+  # CPU fallback
+  cpu_fallback:
+    enabled: true
+    use_when: "gpu_unavailable"
+
+  # Model loading
+  model_loading:
+    qwen_local:
+      quantization: "AWQ"  # Already quantized
+      max_model_len: 4096
+      gpu_memory_utilization: 0.8
+
+# Experimental Features
+experimental:
+  # Multi-model ensemble
+  ensemble_mode:
+    enabled: false  # Disabled by default
+    models: ["gemini", "qwen_local"]
+    voting_strategy: "weighted_consensus"
+
+  # Reinforcement learning from user feedback
+  rlhf:
+    enabled: false  # Future feature
+
+  # Autonomous learning
+  autonomous_learning:
+    enabled: false  # Future feature
+    self_improvement_threshold: 0.9
+
+# Environment Variables Required
+required_env_vars:
+  - GOOGLE_API_KEY  # Gemini API key
+  - OPENAI_API_KEY  # For vLLM compatibility (can be dummy)
+  - LLM_LEARNING_ENABLED  # Set to "true" to enable learning
+  - LLM_MODE  # hybrid_collaborative, local_only, or cloud_only
+
+# Notes
+notes: |
+  This configuration enables Dell Boca Boys V2 to learn continuously from
+  Gemini interactions while primarily using the local Qwen2.5 model for
+  fast, cost-effective inference.
+
+  Key Benefits:
+  1. Continuous improvement through Gemini learning
+  2. Cost-effective local inference
+  3. Offline capability with local model
+  4. Best-of-both-worlds approach
+
+  The system captures every Gemini interaction, converts it to training
+  data, and periodically fine-tunes the local model. Over time, the local
+  model becomes increasingly capable, reducing reliance on Gemini while
+  maintaining high quality.
