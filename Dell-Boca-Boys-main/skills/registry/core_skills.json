@@ -1,0 +1,264 @@
+{
+  "generated_at": "2025-10-06T16:22:45.066796Z",
+  "skills": [
+    {
+      "id": "core.search.enterprise",
+      "display_name": "Enterprise Search",
+      "intent": "Search enterprise knowledge sources and return ranked snippets with citations.",
+      "owner": "platform@company.com",
+      "version": "1.0.0",
+      "status": "stable",
+      "tags": [
+        "core",
+        "rag",
+        "search"
+      ],
+      "inputs": {
+        "type": "object",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "query": {
+            "type": "string"
+          },
+          "filters": {
+            "type": "object"
+          }
+        }
+      },
+      "outputs": {
+        "type": "object",
+        "required": [
+          "results",
+          "trace_id"
+        ],
+        "properties": {
+          "results": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "snippet": {
+                  "type": "string"
+                },
+                "score": {
+                  "type": "number",
+                  "units": "cosine"
+                }
+              }
+            }
+          },
+          "trace_id": {
+            "type": "string"
+          }
+        }
+      },
+      "preconditions": [
+        "query length >= 2"
+      ],
+      "postconditions": [
+        "results sorted by score desc"
+      ],
+      "tools_required": [
+        {
+          "name": "search.index",
+          "scope": "read"
+        }
+      ],
+      "context_required": [
+        {
+          "name": "kb.index",
+          "freshness": "P1D"
+        }
+      ],
+      "error_model": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        }
+      },
+      "examples": [
+        {
+          "inputs": {
+            "query": "travel policy per diem"
+          },
+          "expected_outputs": {
+            "results": [
+              {
+                "source": "kb://policies/travel"
+              }
+            ]
+          }
+        }
+      ],
+      "changelog": [
+        {
+          "version": "1.0.0",
+          "notes": "Initial release"
+        }
+      ]
+    },
+    {
+      "id": "core.summarize",
+      "display_name": "Structured Summarization",
+      "intent": "Summarize documents into structured bullet points, risks, actions, and deadlines.",
+      "owner": "platform@company.com",
+      "version": "1.0.0",
+      "status": "stable",
+      "tags": [
+        "core",
+        "nlp"
+      ],
+      "inputs": {
+        "type": "object",
+        "required": [
+          "doc"
+        ],
+        "properties": {
+          "doc": {
+            "type": "string"
+          }
+        }
+      },
+      "outputs": {
+        "type": "object",
+        "required": [
+          "summary",
+          "actions",
+          "trace_id"
+        ],
+        "properties": {
+          "summary": {
+            "type": "string"
+          },
+          "actions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "trace_id": {
+            "type": "string"
+          }
+        }
+      },
+      "preconditions": [
+        "doc not empty"
+      ],
+      "postconditions": [
+        "no hallucinations: only derive from doc"
+      ],
+      "tools_required": [
+        {
+          "name": "nlp.summarizer",
+          "scope": "read"
+        }
+      ],
+      "context_required": [],
+      "error_model": {
+        "type": "object"
+      },
+      "examples": [
+        {
+          "inputs": {
+            "doc": "A. Do X by Y."
+          },
+          "expected_outputs": {
+            "actions": [
+              "Do X by Y"
+            ]
+          }
+        }
+      ],
+      "changelog": [
+        {
+          "version": "1.0.0",
+          "notes": "Initial"
+        }
+      ]
+    },
+    {
+      "id": "core.calculate",
+      "display_name": "Deterministic Calculator",
+      "intent": "Perform exact arithmetic and unit conversions returning typed results.",
+      "owner": "platform@company.com",
+      "version": "1.0.0",
+      "status": "stable",
+      "tags": [
+        "core",
+        "math"
+      ],
+      "inputs": {
+        "type": "object",
+        "required": [
+          "expression"
+        ],
+        "properties": {
+          "expression": {
+            "type": "string"
+          },
+          "units": {
+            "type": "string"
+          }
+        }
+      },
+      "outputs": {
+        "type": "object",
+        "required": [
+          "value",
+          "trace_id"
+        ],
+        "properties": {
+          "value": {
+            "type": "number",
+            "units": "scalar"
+          },
+          "trace_id": {
+            "type": "string"
+          }
+        }
+      },
+      "preconditions": [
+        "expression parsable"
+      ],
+      "postconditions": [
+        "no NaN"
+      ],
+      "tools_required": [
+        {
+          "name": "calc.engine",
+          "scope": "read"
+        }
+      ],
+      "context_required": [],
+      "error_model": {
+        "type": "object"
+      },
+      "examples": [
+        {
+          "inputs": {
+            "expression": "2+2"
+          },
+          "expected_outputs": {
+            "value": 4
+          }
+        }
+      ],
+      "changelog": [
+        {
+          "version": "1.0.0",
+          "notes": "Initial"
+        }
+      ]
+    }
+  ]
+}

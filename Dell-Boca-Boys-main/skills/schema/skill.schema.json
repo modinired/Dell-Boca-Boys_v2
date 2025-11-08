@@ -1,0 +1,130 @@
+{
+  "$id": "https://cesar/enterprise/skill.schema.json",
+  "title": "Enterprise Skill Node",
+  "type": "object",
+  "required": [
+    "id",
+    "display_name",
+    "intent",
+    "owner",
+    "version",
+    "status",
+    "tags",
+    "inputs",
+    "outputs",
+    "preconditions",
+    "postconditions",
+    "tools_required",
+    "context_required",
+    "error_model",
+    "examples",
+    "changelog"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9_.-]+$"
+    },
+    "display_name": {
+      "type": "string"
+    },
+    "intent": {
+      "type": "string",
+      "minLength": 10
+    },
+    "owner": {
+      "type": "string"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "stable",
+        "beta",
+        "internal"
+      ]
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "inputs": {
+      "type": "object"
+    },
+    "outputs": {
+      "type": "object"
+    },
+    "preconditions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "postconditions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "tools_required": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "scope": {
+            "type": "string",
+            "enum": [
+              "read",
+              "write",
+              "admin"
+            ]
+          }
+        },
+        "required": [
+          "name",
+          "scope"
+        ]
+      }
+    },
+    "context_required": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "freshness": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "name"
+        ]
+      }
+    },
+    "error_model": {
+      "type": "object"
+    },
+    "examples": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "changelog": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    }
+  }
+}

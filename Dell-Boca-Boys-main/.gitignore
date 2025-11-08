@@ -1,0 +1,49 @@
+# Logs
+*.log
+
+# Databases
+*.db
+*.sqlite
+*.sqlite3
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Virtual environments
+venv/
+env/
+ENV/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+
+# Environment variables
+.env
+!.env.example
+
+# Build artifacts
+dist/
+build/
+*.egg-info/
+
+# Media files (optional - uncomment if needed)
+# *.mp4
+# *.avi
+# *.mov

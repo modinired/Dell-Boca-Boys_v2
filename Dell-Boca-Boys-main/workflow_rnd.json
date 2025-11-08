@@ -1,0 +1,431 @@
+{
+  "name": "research_and_innovation::v1.0.0",
+  "metadata": {
+    "industry": "finance",
+    "department": "research_and_innovation",
+    "sourceRegistry": "/Users/modini_red/MrMayhem/enterprise_agent/enterprise_agent/registry/research_and_innovation.json",
+    "skillCount": 4
+  },
+  "nodes": [
+    {
+      "id": "1",
+      "name": "Experimental Design & Validation",
+      "type": "custom.skillNode",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "parameters": {
+        "skillId": "research_and_innovation.experimental_design",
+        "intent": "Design controlled experiments; define hypotheses, power analysis, and validate outcomes against acceptance criteria.",
+        "version": "1.0.0",
+        "status": "stable",
+        "tags": [
+          "rnd",
+          "experimentation"
+        ],
+        "instructions": [
+          "Collect hypotheses, primary metrics, guardrail metrics, and expected effect sizes; reject submissions missing any element so experiments remain statistically defensible.",
+          "Compute minimum sample size and power using the organization's standard calculator (e.g., stats.engine) and attach the computation trace for audit.",
+          "Define treatment/control allocations, randomization unit, and experiment duration; document mitigations for carryover and novelty bias.",
+          "Publish the experiment template with KPIs, acceptance thresholds, and rollback criteria to the research runbook before kickoff.",
+          "Register the experiment identifier in the reproducibility ledger and link telemetry streams so downstream analysis is deterministic.",
+          "Schedule interim data-quality checks and ethics/compliance reviews aligned with the lab governance calendar."
+        ],
+        "inputs": {
+          "type": "object",
+          "required": [
+            "hypothesis",
+            "metrics"
+          ],
+          "properties": {
+            "hypothesis": {
+              "type": "string"
+            },
+            "metrics": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "outputs": {
+          "type": "object",
+          "required": [
+            "plan",
+            "trace_id"
+          ],
+          "properties": {
+            "plan": {
+              "type": "object"
+            },
+            "trace_id": {
+              "type": "string"
+            }
+          }
+        },
+        "preconditions": [
+          "metrics not empty"
+        ],
+        "postconditions": [
+          "plan includes sample size and MDE"
+        ],
+        "toolsRequired": [
+          {
+            "name": "stats.engine",
+            "scope": "read"
+          }
+        ],
+        "contextRequired": [],
+        "errorModel": {
+          "type": "object"
+        },
+        "examples": [
+          {
+            "inputs": {
+              "hypothesis": "X reduces Y",
+              "metrics": [
+                "Y"
+              ]
+            },
+            "expected_outputs": {
+              "plan": {
+                "design": "A/B"
+              },
+              "trace_id": "auto"
+            }
+          }
+        ],
+        "changelog": [
+          {
+            "version": "1.0.0",
+            "notes": "Initial"
+          }
+        ]
+      }
+    },
+    {
+      "id": "2",
+      "name": "IP & Patent Analytics",
+      "type": "custom.skillNode",
+      "position": {
+        "x": 280,
+        "y": 0
+      },
+      "parameters": {
+        "skillId": "research_and_innovation.ip_patent_analytics",
+        "intent": "Analyze prior art, patent families, and freedom-to-operate signals to inform filing strategy.",
+        "version": "1.0.0",
+        "status": "stable",
+        "tags": [
+          "rnd",
+          "ip"
+        ],
+        "instructions": [
+          "Translate the invention summary into claimable features and normalization keywords to widen the search space.",
+          "Query patent and publication corpora (USPTO PAIR, Espacenet, IEEE) capturing corpus versions, query strings, and timestamps for audit.",
+          "Assess freedom-to-operate by mapping prior art claims to the invention bill-of-materials, highlighting conflicting jurisdictions.",
+          "Score novelty, enforceability, and competitive density on a 1-5 scale; flag blocking citations for counsel review.",
+          "Draft filing recommendations including claim focus, jurisdictions, and watchlist targets, embedding citations and risk notes.",
+          "File the analysis package in the IP vault, tagging it with trace IDs and review deadlines for the legal team."
+        ],
+        "inputs": {
+          "type": "object",
+          "required": [
+            "invention_summary"
+          ],
+          "properties": {
+            "invention_summary": {
+              "type": "string"
+            }
+          }
+        },
+        "outputs": {
+          "type": "object",
+          "required": [
+            "analysis",
+            "trace_id"
+          ],
+          "properties": {
+            "analysis": {
+              "type": "object"
+            },
+            "trace_id": {
+              "type": "string"
+            }
+          }
+        },
+        "preconditions": [
+          "invention summary provided"
+        ],
+        "postconditions": [
+          "citations traceable"
+        ],
+        "toolsRequired": [
+          {
+            "name": "ip.repo",
+            "scope": "read"
+          }
+        ],
+        "contextRequired": [],
+        "errorModel": {
+          "type": "object"
+        },
+        "examples": [
+          {
+            "inputs": {
+              "invention_summary": "Novel latch geometry"
+            },
+            "expected_outputs": {
+              "analysis": {
+                "risk": "low"
+              },
+              "trace_id": "auto"
+            }
+          }
+        ],
+        "changelog": [
+          {
+            "version": "1.0.0",
+            "notes": "Initial"
+          }
+        ]
+      }
+    },
+    {
+      "id": "3",
+      "name": "Prototype Benchmarking & Scoring",
+      "type": "custom.skillNode",
+      "position": {
+        "x": 560,
+        "y": 0
+      },
+      "parameters": {
+        "skillId": "research_and_innovation.prototype_benchmarking",
+        "intent": "Benchmark prototypes on objective KPIs and compute readiness scores for gate reviews.",
+        "version": "1.0.0",
+        "status": "stable",
+        "tags": [
+          "rnd",
+          "benchmark"
+        ],
+        "instructions": [
+          "Ingest the prototype manifest, firmware build hash, and lab configuration; lock the testbed to prevent drift during evaluation.",
+          "Execute benchmark suites for each KPI with calibrated instrumentation, capturing raw sensor logs and environment conditions.",
+          "Normalize outputs against control baselines and compute readiness scores using the agreed weighting model.",
+          "Audit lab results for statistical power and measurement bias; annotate deviations with corrective actions or retest requirements.",
+          "Publish the benchmark dossier (plots, scorecards, anomalies) to the gate review workspace.",
+          "Update the portfolio tracker with readiness status, next actions, and the evidence artifact link."
+        ],
+        "inputs": {
+          "type": "object",
+          "required": [
+            "prototype_id",
+            "kpis"
+          ],
+          "properties": {
+            "prototype_id": {
+              "type": "string"
+            },
+            "kpis": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "outputs": {
+          "type": "object",
+          "required": [
+            "scores",
+            "trace_id"
+          ],
+          "properties": {
+            "scores": {
+              "type": "object"
+            },
+            "trace_id": {
+              "type": "string"
+            }
+          }
+        },
+        "preconditions": [
+          "prototype exists"
+        ],
+        "postconditions": [
+          "scores computed deterministically"
+        ],
+        "toolsRequired": [
+          {
+            "name": "lab.measure",
+            "scope": "read"
+          }
+        ],
+        "contextRequired": [],
+        "errorModel": {
+          "type": "object"
+        },
+        "examples": [
+          {
+            "inputs": {
+              "prototype_id": "P-1",
+              "kpis": [
+                "latency",
+                "accuracy"
+              ]
+            },
+            "expected_outputs": {
+              "scores": {
+                "latency": 1
+              },
+              "trace_id": "auto"
+            }
+          }
+        ],
+        "changelog": [
+          {
+            "version": "1.0.0",
+            "notes": "Initial"
+          }
+        ]
+      }
+    },
+    {
+      "id": "4",
+      "name": "Innovation Portfolio Prioritization",
+      "type": "custom.skillNode",
+      "position": {
+        "x": 840,
+        "y": 0
+      },
+      "parameters": {
+        "skillId": "research_and_innovation.innovation_portfolio",
+        "intent": "Prioritize initiatives by strategic fit, risk-adjusted NPV, and resource constraints.",
+        "version": "1.0.0",
+        "status": "stable",
+        "tags": [
+          "rnd",
+          "portfolio"
+        ],
+        "instructions": [
+          "Aggregate initiative metadata (strategic theme, budget, risk rating, dependencies) into the prioritization dataset.",
+          "Model risk-adjusted NPV using finance-approved discount rates and Monte Carlo simulations for uncertainty bands.",
+          "Score strategic fit against corporate horizons, regulatory posture, and talent availability; document scoring rationale.",
+          "Prioritize the portfolio using constrained optimization (budget, headcount, capacity) and generate scenario variants for executives.",
+          "Propose funding reallocations, highlighting trade-offs and dependency impacts for steering committee review.",
+          "Log approved decisions and trigger downstream execution workflows with refreshed KPIs and review cadences."
+        ],
+        "inputs": {
+          "type": "object",
+          "required": [
+            "initiatives"
+          ],
+          "properties": {
+            "initiatives": {
+              "type": "array",
+              "items": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "outputs": {
+          "type": "object",
+          "required": [
+            "prioritized",
+            "trace_id"
+          ],
+          "properties": {
+            "prioritized": {
+              "type": "array",
+              "items": {
+                "type": "object"
+              }
+            },
+            "trace_id": {
+              "type": "string"
+            }
+          }
+        },
+        "preconditions": [
+          "initiatives not empty"
+        ],
+        "postconditions": [
+          "deterministic ordering"
+        ],
+        "toolsRequired": [
+          {
+            "name": "finance.modeler",
+            "scope": "read"
+          }
+        ],
+        "contextRequired": [],
+        "errorModel": {
+          "type": "object"
+        },
+        "examples": [
+          {
+            "inputs": {
+              "initiatives": [
+                {
+                  "id": "I1"
+                }
+              ]
+            },
+            "expected_outputs": {
+              "prioritized": [
+                {
+                  "id": "I1"
+                }
+              ],
+              "trace_id": "auto"
+            }
+          }
+        ],
+        "changelog": [
+          {
+            "version": "1.0.0",
+            "notes": "Initial"
+          }
+        ]
+      }
+    }
+  ],
+  "connections": {
+    "Experimental Design & Validation": {
+      "main": [
+        [
+          {
+            "node": "IP & Patent Analytics",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IP & Patent Analytics": {
+      "main": [
+        [
+          {
+            "node": "Prototype Benchmarking & Scoring",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prototype Benchmarking & Scoring": {
+      "main": [
+        [
+          {
+            "node": "Innovation Portfolio Prioritization",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}

@@ -1,0 +1,688 @@
+{
+  "name": "finance.ap::v1.0.0",
+  "metadata": {
+    "industry": "finance",
+    "department": "finance.ap",
+    "sourceRegistry": "/Users/modini_red/MrMayhem/enterprise_agent/enterprise_agent/registry/finance_ap.json",
+    "skillCount": 7
+  },
+  "nodes": [
+    {
+      "id": "1",
+      "name": "Intake Capture_Invoice",
+      "type": "custom.skillNode",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "parameters": {
+        "skillId": "finance.ap.intake.capture_invoice",
+        "intent": "Execute Intake Capture_Invoice deterministically.",
+        "version": "1.0.0",
+        "status": "stable",
+        "tags": [
+          "finance",
+          "ap",
+          "intake"
+        ],
+        "instructions": [
+          "Verify the inbound payload includes `invoice_document`, `vendor_code`, `invoice_number`, `invoice_date`, `currency`, and `amount`; reject the intake with a 422 error when any element is missing.",
+          "When `source_format` equals `image`, execute OCR (AWS Textract or ABBYY) against `invoice_document`, reconcile header totals with the declared `amount`, and persist the checksum alongside parsing metadata.",
+          "Confirm the `vendor_code` exists in the vendor master file and is marked `approved`; block submission if onboarding is pending or the record is inactive.",
+          "Perform duplicate detection by hashing vendor, number, date, and amount, comparing the hash to the payable ledger for the previous 365 days; emit an alert and stop processing when a collision is found.",
+          "Normalize the monetary values to the corporate base currency using the current treasury FX rate and store both native and converted amounts so downstream matching does not depend on runtime conversions.",
+          "Commit the structured invoice payload-including the evidence URI and trace ID-to the AP intake queue with status `captured` and emit an audit log entry referencing the checksum and validator user ID."
+        ],
+        "inputs": {
+          "type": "object",
+          "properties": {
+            "payload": {
+              "type": "object"
+            }
+          }
+        },
+        "outputs": {
+          "type": "object",
+          "required": [
+            "result",
+            "trace_id"
+          ],
+          "properties": {
+            "result": {
+              "type": "object"
+            },
+            "trace_id": {
+              "type": "string"
+            }
+          }
+        },
+        "preconditions": [
+          "payload not null"
+        ],
+        "postconditions": [
+          "deterministic structure"
+        ],
+        "toolsRequired": [
+          {
+            "name": "runtime",
+            "scope": "read"
+          }
+        ],
+        "contextRequired": [],
+        "errorModel": {
+          "type": "object"
+        },
+        "examples": [
+          {
+            "inputs": {
+              "payload": {
+                "example": true
+              }
+            },
+            "expected_outputs": {
+              "result": {
+                "ok": true
+              }
+            }
+          }
+        ],
+        "changelog": [
+          {
+            "version": "1.0.0",
+            "notes": "Initial"
+          }
+        ]
+      }
+    },
+    {
+      "id": "2",
+      "name": "Vendor Onboard",
+      "type": "custom.skillNode",
+      "position": {
+        "x": 280,
+        "y": 0
+      },
+      "parameters": {
+        "skillId": "finance.ap.vendor.onboard",
+        "intent": "Execute Vendor Onboard deterministically.",
+        "version": "1.0.0",
+        "status": "stable",
+        "tags": [
+          "finance",
+          "ap",
+          "vendor"
+        ],
+        "instructions": [
+          "Validate that the request packet includes signed tax documentation (W-9 for US entities, W-8BEN/E for foreign), beneficial ownership declaration, and banking instructions; reject submission if any document is stale (>365 days).",
+          "Cross-reference the vendor's legal name and registration number with the secretary-of-state or companies-house dataset configured for the entity's jurisdiction to ensure good standing.",
+          "Run Know-Your-Business screening across Dun & Bradstreet or equivalent datasets and note the risk rating inside the vendor master profile.",
+          "Capture and encrypt bank account and routing information using the payments vault, storing only tokenized references in the ERP vendor record.",
+          "Assign default GL coding, payment terms, and approver routing rules based on commodity category; present the summary to the compliance queue for final approval.",
+          "Upon approval, transition the vendor status to `approved`, record the approver's ID, and notify sourcing, AP, and the requester with the new vendor code and onboarding evidence packet link."
+        ],
+        "inputs": {
+          "type": "object",
+          "properties": {
+            "payload": {
+              "type": "object"
+            }
+          }
+        },
+        "outputs": {
+          "type": "object",
+          "required": [
+            "result",
+            "trace_id"
+          ],
+          "properties": {
+            "result": {
+              "type": "object"
+            },
+            "trace_id": {
+              "type": "string"
+            }
+          }
+        },
+        "preconditions": [
+          "payload not null"
+        ],
+        "postconditions": [
+          "deterministic structure"
+        ],
+        "toolsRequired": [
+          {
+            "name": "runtime",
+            "scope": "read"
+          }
+        ],
+        "contextRequired": [],
+        "errorModel": {
+          "type": "object"
+        },
+        "examples": [
+          {
+            "inputs": {
+              "payload": {
+                "example": true
+              }
+            },
+            "expected_outputs": {
+              "result": {
+                "ok": true
+              }
+            }
+          }
+        ],
+        "changelog": [
+          {
+            "version": "1.0.0",
+            "notes": "Initial"
+          }
+        ]
+      }
+    },
+    {
+      "id": "3",
+      "name": "Vendor Sanctions_Screen",
+      "type": "custom.skillNode",
+      "position": {
+        "x": 560,
+        "y": 0
+      },
+      "parameters": {
+        "skillId": "finance.ap.vendor.sanctions_screen",
+        "intent": "Execute Vendor Sanctions_Screen deterministically.",
+        "version": "1.0.0",
+        "status": "stable",
+        "tags": [
+          "finance",
+          "ap",
+          "vendor"
+        ],
+        "instructions": [
+          "Aggregate the vendor's legal names, trade names, and principal owners into a canonical list of screening targets.",
+          "Run the targets through OFAC SDN, EU Consolidated, and local sanctions datasets; include fuzzy matching with a similarity threshold of 92% to capture near-matches.",
+          "Log each match attempt with source list name, dataset hash, and execution timestamp to satisfy auditability standards.",
+          "Escalate any positive or near-positive matches to compliance, freezing the vendor record by setting the status to `hold_pending_review` and notifying the sanctions officer.",
+          "If no matches are found, record the negative screening result with expiry date (30 days by default) and attach the evidence artifact to the vendor profile.",
+          "Schedule the next screening job based on the vendor's risk tier (monthly for high-risk, quarterly for standard) and store the schedule in the monitoring queue."
+        ],
+        "inputs": {
+          "type": "object",
+          "properties": {
+            "payload": {
+              "type": "object"
+            }
+          }
+        },
+        "outputs": {
+          "type": "object",
+          "required": [
+            "result",
+            "trace_id"
+          ],
+          "properties": {
+            "result": {
+              "type": "object"
+            },
+            "trace_id": {
+              "type": "string"
+            }
+          }
+        },
+        "preconditions": [
+          "payload not null"
+        ],
+        "postconditions": [
+          "deterministic structure"
+        ],
+        "toolsRequired": [
+          {
+            "name": "runtime",
+            "scope": "read"
+          }
+        ],
+        "contextRequired": [],
+        "errorModel": {
+          "type": "object"
+        },
+        "examples": [
+          {
+            "inputs": {
+              "payload": {
+                "example": true
+              }
+            },
+            "expected_outputs": {
+              "result": {
+                "ok": true
+              }
+            }
+          }
+        ],
+        "changelog": [
+          {
+            "version": "1.0.0",
+            "notes": "Initial"
+          }
+        ]
+      }
+    },
+    {
+      "id": "4",
+      "name": "Match Perform_3Way",
+      "type": "custom.skillNode",
+      "position": {
+        "x": 840,
+        "y": 0
+      },
+      "parameters": {
+        "skillId": "finance.ap.match.perform_3way",
+        "intent": "Execute Match Perform_3Way deterministically.",
+        "version": "1.0.0",
+        "status": "stable",
+        "tags": [
+          "finance",
+          "ap",
+          "match"
+        ],
+        "instructions": [
+          "Retrieve the approved purchase order lines and goods-receipt records associated with the invoice's PO number, ensuring both datasets share the same currency and unit of measure.",
+          "Aggregate quantity received per line item and compare against invoiced quantities, applying tolerance thresholds (2% value variance, +/-1 unit quantity) defined in the control catalog.",
+          "Validate unit prices by comparing invoice line pricing with PO pricing; flag any deviation beyond tolerance for buyer review and halt payment workflow progression.",
+          "Confirm that receipt postings are complete and dated on or before the invoice date; if receiving is incomplete, notify the warehouse lead and set the match status to `pending_receipt`.",
+          "When all tolerances and receipts align, generate a match certificate with references to PO, GR, and invoice documents, and store it along with the traceable hash in the audit repository.",
+          "Update the invoice status to `matched_3way` and trigger downstream approval routing according to the authority matrix."
+        ],
+        "inputs": {
+          "type": "object",
+          "properties": {
+            "payload": {
+              "type": "object"
+            }
+          }
+        },
+        "outputs": {
+          "type": "object",
+          "required": [
+            "result",
+            "trace_id"
+          ],
+          "properties": {
+            "result": {
+              "type": "object"
+            },
+            "trace_id": {
+              "type": "string"
+            }
+          }
+        },
+        "preconditions": [
+          "payload not null"
+        ],
+        "postconditions": [
+          "deterministic structure"
+        ],
+        "toolsRequired": [
+          {
+            "name": "runtime",
+            "scope": "read"
+          }
+        ],
+        "contextRequired": [],
+        "errorModel": {
+          "type": "object"
+        },
+        "examples": [
+          {
+            "inputs": {
+              "payload": {
+                "example": true
+              }
+            },
+            "expected_outputs": {
+              "result": {
+                "ok": true
+              }
+            }
+          }
+        ],
+        "changelog": [
+          {
+            "version": "1.0.0",
+            "notes": "Initial"
+          }
+        ]
+      }
+    },
+    {
+      "id": "5",
+      "name": "Controls Enforce_Sod",
+      "type": "custom.skillNode",
+      "position": {
+        "x": 1120,
+        "y": 0
+      },
+      "parameters": {
+        "skillId": "finance.ap.controls.enforce_sod",
+        "intent": "Execute Controls Enforce_Sod deterministically.",
+        "version": "1.0.0",
+        "status": "stable",
+        "tags": [
+          "finance",
+          "ap",
+          "controls"
+        ],
+        "instructions": [
+          "Compile the user IDs associated with invoice capture, match approval, payment authorization, and vendor master changes over the last 24 hours.",
+          "Compare role assignments against the segregation-of-duties matrix, ensuring that no single user holds conflicting roles (e.g., capture + payment release).",
+          "For any violation, automatically suspend the workflow step, log the breach with offending roles, and alert the internal controls mailbox with remediation guidance.",
+          "Generate a remediation checklist assigning temporary alternate approvers and requiring evidence upload once the corrective action is completed.",
+          "Record all SoD checks, including compliant results, in the control ledger with timestamp and policy reference (e.g., FIN-SOD-003).",
+          "Feed summarized breach statistics into the compliance dashboard and reset resolved violations after verification by the control owner."
+        ],
+        "inputs": {
+          "type": "object",
+          "properties": {
+            "payload": {
+              "type": "object"
+            }
+          }
+        },
+        "outputs": {
+          "type": "object",
+          "required": [
+            "result",
+            "trace_id"
+          ],
+          "properties": {
+            "result": {
+              "type": "object"
+            },
+            "trace_id": {
+              "type": "string"
+            }
+          }
+        },
+        "preconditions": [
+          "payload not null"
+        ],
+        "postconditions": [
+          "deterministic structure"
+        ],
+        "toolsRequired": [
+          {
+            "name": "runtime",
+            "scope": "read"
+          }
+        ],
+        "contextRequired": [],
+        "errorModel": {
+          "type": "object"
+        },
+        "examples": [
+          {
+            "inputs": {
+              "payload": {
+                "example": true
+              }
+            },
+            "expected_outputs": {
+              "result": {
+                "ok": true
+              }
+            }
+          }
+        ],
+        "changelog": [
+          {
+            "version": "1.0.0",
+            "notes": "Initial"
+          }
+        ]
+      }
+    },
+    {
+      "id": "6",
+      "name": "Payments Generate_Nacha",
+      "type": "custom.skillNode",
+      "position": {
+        "x": 1400,
+        "y": 0
+      },
+      "parameters": {
+        "skillId": "finance.ap.payments.generate_nacha",
+        "intent": "Execute Payments Generate_Nacha deterministically.",
+        "version": "1.0.0",
+        "status": "stable",
+        "tags": [
+          "finance",
+          "ap",
+          "payments"
+        ],
+        "instructions": [
+          "Gather all invoices marked `approved_for_payment` with ACH as the disbursement method and validate that each has a completed three-way match certificate and no outstanding SoD flags.",
+          "For each invoice, pull the tokenized bank account details from the payments vault and decode them within the HSM-secured environment to obtain routing and account numbers.",
+          "Construct the NACHA file header with the current processing date, originating routing number, and immediate destination per treasury configuration.",
+          "Build batch records per company code, ensuring entry detail records use the CCD or PPD standard as dictated by vendor classification and include addenda with invoice references.",
+          "Calculate block control totals, including hash totals and entry counts, and append file control records; validate the structure with the NACHA schema before release.",
+          "Store the generated NACHA file in the secure transfer folder, register the file name and hash in the treasury ledger, and notify the treasury operator for transmission."
+        ],
+        "inputs": {
+          "type": "object",
+          "properties": {
+            "payload": {
+              "type": "object"
+            }
+          }
+        },
+        "outputs": {
+          "type": "object",
+          "required": [
+            "result",
+            "trace_id"
+          ],
+          "properties": {
+            "result": {
+              "type": "object"
+            },
+            "trace_id": {
+              "type": "string"
+            }
+          }
+        },
+        "preconditions": [
+          "payload not null"
+        ],
+        "postconditions": [
+          "deterministic structure"
+        ],
+        "toolsRequired": [
+          {
+            "name": "runtime",
+            "scope": "read"
+          }
+        ],
+        "contextRequired": [],
+        "errorModel": {
+          "type": "object"
+        },
+        "examples": [
+          {
+            "inputs": {
+              "payload": {
+                "example": true
+              }
+            },
+            "expected_outputs": {
+              "result": {
+                "ok": true
+              }
+            }
+          }
+        ],
+        "changelog": [
+          {
+            "version": "1.0.0",
+            "notes": "Initial"
+          }
+        ]
+      }
+    },
+    {
+      "id": "7",
+      "name": "Recon Bank",
+      "type": "custom.skillNode",
+      "position": {
+        "x": 1680,
+        "y": 0
+      },
+      "parameters": {
+        "skillId": "finance.ap.recon.bank",
+        "intent": "Execute Recon Bank deterministically.",
+        "version": "1.0.0",
+        "status": "stable",
+        "tags": [
+          "finance",
+          "ap",
+          "recon"
+        ],
+        "instructions": [
+          "Retrieve the prior day's bank statement via secure FTP or API and ingest it into the reconciliation staging table.",
+          "Normalize the statement entries, mapping bank transaction codes to internal GL categories and attaching payment file references when available.",
+          "Match cleared payments to the payable sub-ledger by trace ID; flag unmatched entries for investigation and create case tickets with supporting evidence.",
+          "Identify bank charges, interest, and FX adjustments, posting them to the appropriate GL accounts with supporting documentation.",
+          "Produce a reconciliation report that shows opening balance, cleared items, outstanding payments, and ending balance that ties back to the bank statement total.",
+          "Route the reconciliation package to the controller for sign-off, archiving the approved report and attachments in the monthly close repository."
+        ],
+        "inputs": {
+          "type": "object",
+          "properties": {
+            "payload": {
+              "type": "object"
+            }
+          }
+        },
+        "outputs": {
+          "type": "object",
+          "required": [
+            "result",
+            "trace_id"
+          ],
+          "properties": {
+            "result": {
+              "type": "object"
+            },
+            "trace_id": {
+              "type": "string"
+            }
+          }
+        },
+        "preconditions": [
+          "payload not null"
+        ],
+        "postconditions": [
+          "deterministic structure"
+        ],
+        "toolsRequired": [
+          {
+            "name": "runtime",
+            "scope": "read"
+          }
+        ],
+        "contextRequired": [],
+        "errorModel": {
+          "type": "object"
+        },
+        "examples": [
+          {
+            "inputs": {
+              "payload": {
+                "example": true
+              }
+            },
+            "expected_outputs": {
+              "result": {
+                "ok": true
+              }
+            }
+          }
+        ],
+        "changelog": [
+          {
+            "version": "1.0.0",
+            "notes": "Initial"
+          }
+        ]
+      }
+    }
+  ],
+  "connections": {
+    "Intake Capture_Invoice": {
+      "main": [
+        [
+          {
+            "node": "Vendor Onboard",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Vendor Onboard": {
+      "main": [
+        [
+          {
+            "node": "Vendor Sanctions_Screen",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Vendor Sanctions_Screen": {
+      "main": [
+        [
+          {
+            "node": "Match Perform_3Way",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Match Perform_3Way": {
+      "main": [
+        [
+          {
+            "node": "Controls Enforce_Sod",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Controls Enforce_Sod": {
+      "main": [
+        [
+          {
+            "node": "Payments Generate_Nacha",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Payments Generate_Nacha": {
+      "main": [
+        [
+          {
+            "node": "Recon Bank",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}

@@ -1,0 +1,3 @@
+CustomerID,Name,Terms,CreditLimit,Contact
+CUST-001,Acme Corp,Net30,50000,ap@acme.com
+CUST-002,Bluebird LLC,Net15,20000,accounts@bluebird.com

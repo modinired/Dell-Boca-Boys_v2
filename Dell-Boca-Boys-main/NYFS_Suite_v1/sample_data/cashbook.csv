@@ -1,0 +1,3 @@
+Date,AccountID,Counterparty,Description,Amount,Type,LinkEntryID
+2025-09-10,AR,Acme Corp,Receipt INV-1001,1500,Receipt,1
+2025-09-19,AP,Supplier One,Payment BILL-777,1200,Payment,1

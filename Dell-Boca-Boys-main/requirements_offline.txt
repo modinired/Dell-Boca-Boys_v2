@@ -1,0 +1,14 @@
+openai
+PyYAML
+requests
+google-api-python-client
+google-auth
+google-auth-httplib2
+google-auth-oauthlib
+googlesearch-python
+sentence-transformers
+numpy
+
+# Email Communication Dependencies
+aioimaplib>=1.0.1
+aiosmtplib>=3.0.0

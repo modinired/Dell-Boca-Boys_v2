@@ -1,0 +1,3 @@
+ItemID,Name,SKU,Type,UnitPrice,COGSAccount,RevenueAccount,InventoryAccount
+ITEM-001,Gadget A,GA-001,Product,150,COGS,Sales,Inventory
+ITEM-002,Service Plan S,SP-SRV,Service,50,COGS,Sales,

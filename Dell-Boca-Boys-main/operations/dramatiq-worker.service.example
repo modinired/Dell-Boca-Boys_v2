@@ -1,0 +1,18 @@
+# Example systemd unit for the n8n-agent Dramatiq worker
+[Unit]
+Description=n8n-agent Dramatiq Worker
+After=network.target redis.service postgresql.service
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/n8n-agent
+Environment="APP_ENV=production"
+EnvironmentFile=/opt/n8n-agent/.env
+ExecStart=/opt/n8n-agent/.venv/bin/dramatiq app.core.task_queue --processes 1 --threads 4 --path .
+Restart=on-failure
+RestartSec=5
+User=n8n
+Group=n8n
+
+[Install]
+WantedBy=multi-user.target

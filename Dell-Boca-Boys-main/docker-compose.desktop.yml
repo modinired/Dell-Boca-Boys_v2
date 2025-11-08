@@ -1,0 +1,312 @@
+version: "3.9"
+
+# ============================================================================
+# N8n Agent + Workflow Intelligence Stack
+# Desktop-Optimized Unified Deployment
+# ============================================================================
+#
+# This compose file integrates:
+# - N8n Autonomous Agent System (AI workflow generation)
+# - Workflow Intelligence Stack (process mining, analytics)
+#
+# Optimized for desktop deployment with:
+# - Reduced resource requirements
+# - Single database instance (PostgreSQL 16)
+# - Optional components (enable as needed)
+# - Clear documentation and health checks
+#
+# Quick Start:
+#   docker-compose -f docker-compose.desktop.yml up -d
+#
+# ============================================================================
+
+services:
+  # ==========================================================================
+  # Core Database (Shared by both systems)
+  # ==========================================================================
+  db:
+    image: pgvector/pgvector:pg16
+    container_name: n8n_unified_db
+    environment:
+      POSTGRES_USER: ${PGUSER:-n8n_agent}
+      POSTGRES_PASSWORD: ${PGPASSWORD:-change_me_in_production}
+      POSTGRES_DB: ${PGDATABASE:-n8n_agent_memory}
+      POSTGRES_INITDB_ARGS: "-E UTF8 --locale=C"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+      - ./scripts/init_db.sql:/docker-entrypoint-initdb.d/01_init_db.sql:ro
+      # Add CEL schema for workflow intelligence
+      - ./workflow-intelligence/db/cel_schema.sql:/docker-entrypoint-initdb.d/02_cel_schema.sql:ro
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${PGUSER:-n8n_agent}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  # ==========================================================================
+  # Redis (Queue Management)
+  # ==========================================================================
+  redis:
+    image: redis:7-alpine
+    container_name: n8n_unified_redis
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  # ==========================================================================
+  # n8n Workflow Automation Platform
+  # ==========================================================================
+  n8n:
+    image: n8nio/n8n:latest
+    container_name: n8n_unified_n8n
+    environment:
+      - N8N_HOST=${N8N_HOST:-localhost}
+      - N8N_PORT=5678
+      - N8N_PROTOCOL=http
+      - N8N_EDITOR_BASE_URL=${N8N_EDITOR_BASE_URL:-http://localhost:5678}
+      - GENERIC_TIMEZONE=${TIMEZONE:-America/New_York}
+      - N8N_ENCRYPTION_KEY=${N8N_ENCRYPTION_KEY:-}
+      - DB_TYPE=postgresdb
+      - DB_POSTGRESDB_HOST=db
+      - DB_POSTGRESDB_PORT=5432
+      - DB_POSTGRESDB_DATABASE=${PGDATABASE:-n8n_agent_memory}
+      - DB_POSTGRESDB_USER=${PGUSER:-n8n_agent}
+      - DB_POSTGRESDB_PASSWORD=${PGPASSWORD:-change_me_in_production}
+      - QUEUE_BULL_REDIS_HOST=redis
+      - QUEUE_BULL_REDIS_PORT=6379
+      - EXECUTIONS_MODE=regular
+      - N8N_METRICS=true
+    volumes:
+      - n8n_data:/home/node/.n8n
+    ports:
+      - "5678:5678"
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:5678/healthz || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: unless-stopped
+
+  # ==========================================================================
+  # vLLM - LLM Inference Server (GPU-Optimized)
+  # ==========================================================================
+  # Note: Requires NVIDIA GPU with CUDA support
+  # For CPU-only desktop, comment out this service and use Ollama instead
+  vllm:
+    image: vllm/vllm-openai:latest
+    container_name: n8n_unified_vllm
+    runtime: nvidia
+    command:
+      - "--model"
+      - "${LLM_MODEL:-Qwen/Qwen2.5-30B-Instruct-AWQ}"
+      - "--gpu-memory-utilization"
+      - "0.85"
+      - "--max-model-len"
+      - "32768"
+      - "--dtype"
+      - "auto"
+      - "--trust-remote-code"
+      - "--tensor-parallel-size"
+      - "1"
+      - "--disable-log-requests"
+    environment:
+      - VLLM_WORKER_MULTIPROC_METHOD=spawn
+      - CUDA_VISIBLE_DEVICES=0
+    ports:
+      - "8000:8000"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8000/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 120s
+    restart: unless-stopped
+    shm_size: '16gb'
+    profiles: ["gpu"]  # Only start if --profile gpu is specified
+
+  # ==========================================================================
+  # N8n Agent API (FastAPI Application)
+  # ==========================================================================
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: n8n_unified_api
+    env_file: .env
+    environment:
+      - PGHOST=db
+      - N8N_BASE_URL=http://n8n:5678
+      - LLM_BASE_URL=http://vllm:8000/v1
+      - REDIS_HOST=redis
+    depends_on:
+      db:
+        condition: service_healthy
+      n8n:
+        condition: service_healthy
+    volumes:
+      - ./app:/app/app:ro
+      - ./scripts:/app/scripts:ro
+      - ./data:/app/data
+    ports:
+      - "8080:8080"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8080/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: unless-stopped
+
+  # ==========================================================================
+  # Neo4j Graph Database (Optional - Workflow Intelligence)
+  # ==========================================================================
+  neo4j:
+    image: neo4j:5.23
+    container_name: n8n_unified_neo4j
+    environment:
+      NEO4J_AUTH: "${NEO4J_USER:-neo4j}/${NEO4J_PASSWORD:-neo4jStrongP@55}"
+      NEO4J_PLUGINS: '["apoc","graph-data-science"]'
+      NEO4J_dbms_memory_heap_max__size: "2G"
+      NEO4J_dbms_memory_pagecache_size: "1G"
+    ports:
+      - "7474:7474"
+      - "7687:7687"
+    volumes:
+      - neo4j_data:/data
+    restart: unless-stopped
+    profiles: ["analytics"]  # Optional: start with --profile analytics
+
+  # ==========================================================================
+  # Kafka Event Bus (Optional - Workflow Intelligence)
+  # ==========================================================================
+  kafka:
+    image: bitnami/kafka:3.7
+    container_name: n8n_unified_kafka
+    environment:
+      KAFKA_ENABLE_KRAFT: "yes"
+      KAFKA_CFG_PROCESS_ROLES: controller,broker
+      KAFKA_CFG_NODE_ID: 1
+      KAFKA_CFG_CONTROLLER_QUORUM_VOTERS: 1@kafka:9093
+      KAFKA_LISTENERS: PLAINTEXT://:9092,CONTROLLER://:9093
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      ALLOW_PLAINTEXT_LISTENER: "yes"
+    ports:
+      - "9092:9092"
+    volumes:
+      - kafka_data:/bitnami/kafka
+    healthcheck:
+      test: ["CMD-SHELL", "kafka-topics.sh --bootstrap-server localhost:9092 --list || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+    profiles: ["analytics"]  # Optional: start with --profile analytics
+
+  # ==========================================================================
+  # Temporal Workflow Engine (Optional - Advanced Automation)
+  # ==========================================================================
+  temporal:
+    image: temporalio/auto-setup:1.24.2
+    container_name: n8n_unified_temporal
+    environment:
+      DB: postgresql12
+      DB_PORT: 5432
+      POSTGRES_USER: ${PGUSER:-n8n_agent}
+      POSTGRES_PWD: ${PGPASSWORD:-change_me_in_production}
+      POSTGRES_DB: temporal
+      POSTGRES_SEEDS: db
+    ports:
+      - "7233:7233"
+      - "8088:8088"
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+    profiles: ["analytics"]  # Optional: start with --profile analytics
+
+  # ==========================================================================
+  # Open Policy Agent (Optional - Policy Enforcement)
+  # ==========================================================================
+  opa:
+    image: openpolicyagent/opa:latest
+    container_name: n8n_unified_opa
+    command: ["run", "--server", "--log-level=info"]
+    ports:
+      - "8181:8181"
+    restart: unless-stopped
+    profiles: ["analytics"]  # Optional: start with --profile analytics
+
+# ============================================================================
+# Volumes
+# ============================================================================
+volumes:
+  db_data:
+    driver: local
+  redis_data:
+    driver: local
+  n8n_data:
+    driver: local
+  neo4j_data:
+    driver: local
+  kafka_data:
+    driver: local
+
+# ============================================================================
+# Networks
+# ============================================================================
+networks:
+  default:
+    name: n8n_unified_network
+
+# ============================================================================
+# Usage Instructions
+# ============================================================================
+#
+# Basic deployment (minimal resources):
+#   docker-compose -f docker-compose.desktop.yml up -d
+#
+# With GPU support:
+#   docker-compose -f docker-compose.desktop.yml --profile gpu up -d
+#
+# With analytics stack (Neo4j, Kafka, Temporal):
+#   docker-compose -f docker-compose.desktop.yml --profile analytics up -d
+#
+# Full deployment (all features):
+#   docker-compose -f docker-compose.desktop.yml --profile gpu --profile analytics up -d
+#
+# Services accessible at:
+#   - n8n UI: http://localhost:5678
+#   - Agent API: http://localhost:8080
+#   - Agent API Docs: http://localhost:8080/docs
+#   - Neo4j Browser: http://localhost:7474 (analytics profile)
+#   - Database: localhost:5432
+#
+# Resource Requirements:
+#   Minimal (no profiles): 4GB RAM, 2 CPU cores
+#   With GPU: 8GB RAM, 2 CPU cores, NVIDIA GPU with 8GB+ VRAM
+#   With analytics: 8GB RAM, 4 CPU cores
+#   Full deployment: 16GB RAM, 4 CPU cores, NVIDIA GPU
+#
+# ============================================================================

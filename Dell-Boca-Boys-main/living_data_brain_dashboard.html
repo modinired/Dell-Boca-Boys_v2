@@ -1,0 +1,101 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Living Data Brain Dashboard</title>
+<style>
+body { font-family: Arial, sans-serif; margin: 0; background: #f5f7fb; color: #1a202c; }
+header { background: #1a365d; color: #fff; padding: 24px; }
+header h1 { margin: 0; font-size: 28px; }
+main { padding: 24px; max-width: 1200px; margin: 0 auto; }
+.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin: 24px 0; }
+.card { background: #fff; border-radius: 12px; padding: 16px; box-shadow: 0 4px 12px rgba(26, 54, 93, 0.1); }
+.card span { display: block; font-size: 14px; color: #4a5568; margin-bottom: 6px; }
+.card strong { font-size: 24px; color: #1a202c; }
+section { background: #fff; border-radius: 12px; padding: 16px; margin-bottom: 24px; box-shadow: 0 4px 12px rgba(26, 54, 93, 0.08); }
+section h2 { margin-top: 0; }
+section h3 { margin-top: 0; color: #2c5282; }
+.data-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.data-table th, .data-table td { padding: 8px 10px; border: 1px solid #e2e8f0; text-align: left; }
+.data-table th { background: #edf2f7; color: #2d3748; }
+.chart { width: 100%; height: 320px; }
+footer { text-align: center; padding: 16px; color: #718096; font-size: 13px; }
+</style>
+<script>
+function renderCharts() {
+    const scriptCounts = {};
+    const historyCounts = {};
+
+    if (Object.keys(scriptCounts).length) {
+        const canvas = document.getElementById('scriptChart');
+        new window.Chart(canvas, {
+            type: 'bar',
+            data: {
+                labels: Object.keys(scriptCounts),
+                datasets: [{
+                    label: 'Runs by Script',
+                    backgroundColor: '#2c5282',
+                    data: Object.values(scriptCounts)
+                }]
+            }
+        });
+    } else {
+        document.getElementById('scriptChart').replaceWith('No script distribution data available.');
+    }
+
+    if (Object.keys(historyCounts).length) {
+        const canvas = document.getElementById('historyChart');
+        new window.Chart(canvas, {
+            type: 'line',
+            data: {
+                labels: Object.keys(historyCounts),
+                datasets: [{
+                    label: 'Runs per Day',
+                    borderColor: '#38a169',
+                    fill: false,
+                    tension: 0.3,
+                    data: Object.values(historyCounts)
+                }]
+            }
+        });
+    } else {
+        document.getElementById('historyChart').replaceWith('No temporal run data available.');
+    }
+}
+</script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.6/dist/chart.umd.min.js"></script>
+</head>
+<body onload="renderCharts()">
+<header>
+  <h1>Living Data Brain Dashboard</h1>
+  <p>Generated 2025-10-21 09:04 UTC</p>
+</header>
+<main>
+  <section>
+    <h2>Key Metrics</h2>
+    <div class="cards"><div class='card'><span>No run records found.</span></div></div>
+  </section>
+  <section>
+    <h2>Workflow Activity</h2>
+    <canvas id="historyChart" class="chart"></canvas>
+    <canvas id="scriptChart" class="chart"></canvas>
+  </section>
+  <section>
+    <h2>Table Snapshots</h2>
+    <section><h3>runs</h3><table border="1" class="dataframe data-table">
+  <thead>
+    <tr style="text-align: right;">
+      <th>id</th>
+      <th>script_name</th>
+      <th>run_ts</th>
+    </tr>
+  </thead>
+  <tbody>
+  </tbody>
+</table></section>
+  </section>
+</main>
+<footer>Living Data Brain static dashboard. Data is read-only.</footer>
+</body>
+</html>

@@ -1,0 +1,353 @@
+{
+  "dashboard": {
+    "title": "Dell-Boca-Boys Enterprise Orchestrator",
+    "tags": ["orchestrator", "ai", "workflows", "cesar"],
+    "timezone": "browser",
+    "refresh": "30s",
+    "time": {
+      "from": "now-6h",
+      "to": "now"
+    },
+    "panels": [
+      {
+        "id": 1,
+        "title": "System Health",
+        "type": "stat",
+        "gridPos": {"x": 0, "y": 0, "w": 6, "h": 4},
+        "targets": [
+          {
+            "expr": "up{job=\"orchestrator\"}",
+            "legendFormat": "Orchestrator Status"
+          }
+        ],
+        "options": {
+          "colorMode": "background",
+          "graphMode": "none",
+          "textMode": "value_and_name"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {"value": 0, "color": "red"},
+                {"value": 1, "color": "green"}
+              ]
+            }
+          }
+        }
+      },
+      {
+        "id": 2,
+        "title": "Request Rate",
+        "type": "graph",
+        "gridPos": {"x": 6, "y": 0, "w": 9, "h": 4},
+        "targets": [
+          {
+            "expr": "rate(http_requests_total{job=\"orchestrator\"}[5m])",
+            "legendFormat": "{{method}} {{endpoint}}"
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "title": "Active Skills",
+        "type": "stat",
+        "gridPos": {"x": 15, "y": 0, "w": 4, "h": 4},
+        "targets": [
+          {
+            "expr": "skill_registry_total",
+            "legendFormat": "Total Skills"
+          }
+        ],
+        "options": {
+          "colorMode": "value",
+          "graphMode": "area"
+        }
+      },
+      {
+        "id": 4,
+        "title": "Response Time (p95)",
+        "type": "graph",
+        "gridPos": {"x": 0, "y": 4, "w": 12, "h": 6},
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.95, rate(http_request_duration_seconds_bucket{job=\"orchestrator\"}[5m]))",
+            "legendFormat": "{{endpoint}}"
+          }
+        ],
+        "yaxes": [
+          {"format": "s", "label": "Response Time"}
+        ]
+      },
+      {
+        "id": 5,
+        "title": "Error Rate",
+        "type": "graph",
+        "gridPos": {"x": 12, "y": 4, "w": 12, "h": 6},
+        "targets": [
+          {
+            "expr": "rate(http_requests_total{job=\"orchestrator\",status=~\"5..\"}[5m])",
+            "legendFormat": "{{endpoint}}"
+          }
+        ],
+        "alert": {
+          "name": "High Error Rate",
+          "conditions": [
+            {
+              "evaluator": {"type": "gt", "params": [0.05]},
+              "operator": {"type": "and"},
+              "query": {"params": ["A", "5m", "now"]},
+              "type": "query"
+            }
+          ],
+          "frequency": "60s",
+          "handler": 1,
+          "message": "Error rate above 5% threshold",
+          "noDataState": "no_data",
+          "executionErrorState": "alerting"
+        }
+      },
+      {
+        "id": 6,
+        "title": "Memory System Performance",
+        "type": "row",
+        "gridPos": {"x": 0, "y": 10, "w": 24, "h": 1}
+      },
+      {
+        "id": 7,
+        "title": "Memory Operations/sec",
+        "type": "graph",
+        "gridPos": {"x": 0, "y": 11, "w": 8, "h": 5},
+        "targets": [
+          {
+            "expr": "rate(memory_operations_total{operation=\"store\"}[5m])",
+            "legendFormat": "Store"
+          },
+          {
+            "expr": "rate(memory_operations_total{operation=\"retrieve\"}[5m])",
+            "legendFormat": "Retrieve"
+          }
+        ]
+      },
+      {
+        "id": 8,
+        "title": "Memory Cache Hit Rate",
+        "type": "gauge",
+        "gridPos": {"x": 8, "y": 11, "w": 8, "h": 5},
+        "targets": [
+          {
+            "expr": "rate(memory_cache_hits_total[5m]) / rate(memory_cache_requests_total[5m])",
+            "legendFormat": "Cache Hit Rate"
+          }
+        ],
+        "options": {
+          "showThresholdLabels": true,
+          "showThresholdMarkers": true
+        },
+        "fieldConfig": {
+          "defaults": {
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {"value": 0, "color": "red"},
+                {"value": 0.5, "color": "yellow"},
+                {"value": 0.8, "color": "green"}
+              ]
+            },
+            "unit": "percentunit"
+          }
+        }
+      },
+      {
+        "id": 9,
+        "title": "Token Reduction (Mem0 Hybrid)",
+        "type": "stat",
+        "gridPos": {"x": 16, "y": 11, "w": 8, "h": 5},
+        "targets": [
+          {
+            "expr": "memory_token_reduction_percent",
+            "legendFormat": "Token Savings"
+          }
+        ],
+        "options": {
+          "colorMode": "background",
+          "graphMode": "area"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "unit": "percent",
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {"value": 0, "color": "red"},
+                {"value": 50, "color": "yellow"},
+                {"value": 85, "color": "green"}
+              ]
+            }
+          }
+        }
+      },
+      {
+        "id": 10,
+        "title": "Agent Performance",
+        "type": "row",
+        "gridPos": {"x": 0, "y": 16, "w": 24, "h": 1}
+      },
+      {
+        "id": 11,
+        "title": "Active Agents",
+        "type": "graph",
+        "gridPos": {"x": 0, "y": 17, "w": 12, "h": 5},
+        "targets": [
+          {
+            "expr": "agent_active_total",
+            "legendFormat": "{{agent_type}}"
+          }
+        ],
+        "stack": true
+      },
+      {
+        "id": 12,
+        "title": "Agent Breeding Events",
+        "type": "graph",
+        "gridPos": {"x": 12, "y": 17, "w": 12, "h": 5},
+        "targets": [
+          {
+            "expr": "rate(agent_breeding_total[1h])",
+            "legendFormat": "{{pattern_type}}"
+          }
+        ]
+      },
+      {
+        "id": 13,
+        "title": "Emergent Behaviors Detected",
+        "type": "stat",
+        "gridPos": {"x": 0, "y": 22, "w": 6, "h": 4},
+        "targets": [
+          {
+            "expr": "emergent_behaviors_total",
+            "legendFormat": "Total Behaviors"
+          }
+        ],
+        "options": {
+          "colorMode": "value",
+          "graphMode": "area"
+        }
+      },
+      {
+        "id": 14,
+        "title": "Collective Intelligence Score",
+        "type": "gauge",
+        "gridPos": {"x": 6, "y": 22, "w": 6, "h": 4},
+        "targets": [
+          {
+            "expr": "collective_intelligence_score",
+            "legendFormat": "CI Score"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "min": 0,
+            "max": 1,
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {"value": 0, "color": "red"},
+                {"value": 0.5, "color": "yellow"},
+                {"value": 0.8, "color": "green"}
+              ]
+            }
+          }
+        }
+      },
+      {
+        "id": 15,
+        "title": "Workflow Execution",
+        "type": "row",
+        "gridPos": {"x": 0, "y": 26, "w": 24, "h": 1}
+      },
+      {
+        "id": 16,
+        "title": "Workflow Execution Rate",
+        "type": "graph",
+        "gridPos": {"x": 0, "y": 27, "w": 12, "h": 5},
+        "targets": [
+          {
+            "expr": "rate(workflow_executions_total{status=\"success\"}[5m])",
+            "legendFormat": "Success"
+          },
+          {
+            "expr": "rate(workflow_executions_total{status=\"failed\"}[5m])",
+            "legendFormat": "Failed"
+          }
+        ]
+      },
+      {
+        "id": 17,
+        "title": "Average Workflow Duration",
+        "type": "graph",
+        "gridPos": {"x": 12, "y": 27, "w": 12, "h": 5},
+        "targets": [
+          {
+            "expr": "rate(workflow_duration_seconds_sum[5m]) / rate(workflow_duration_seconds_count[5m])",
+            "legendFormat": "{{workflow_id}}"
+          }
+        ],
+        "yaxes": [
+          {"format": "s", "label": "Duration"}
+        ]
+      },
+      {
+        "id": 18,
+        "title": "Database Performance",
+        "type": "row",
+        "gridPos": {"x": 0, "y": 32, "w": 24, "h": 1}
+      },
+      {
+        "id": 19,
+        "title": "Database Query Duration (p95)",
+        "type": "graph",
+        "gridPos": {"x": 0, "y": 33, "w": 12, "h": 5},
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.95, rate(db_query_duration_seconds_bucket[5m]))",
+            "legendFormat": "{{query_type}}"
+          }
+        ]
+      },
+      {
+        "id": 20,
+        "title": "Database Connections",
+        "type": "graph",
+        "gridPos": {"x": 12, "y": 33, "w": 12, "h": 5},
+        "targets": [
+          {
+            "expr": "db_connections_active",
+            "legendFormat": "Active"
+          },
+          {
+            "expr": "db_connections_idle",
+            "legendFormat": "Idle"
+          }
+        ]
+      },
+      {
+        "id": 21,
+        "title": "Vector Search Performance",
+        "type": "graph",
+        "gridPos": {"x": 0, "y": 38, "w": 24, "h": 5},
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.95, rate(vector_search_duration_seconds_bucket[5m]))",
+            "legendFormat": "p95 Duration"
+          },
+          {
+            "expr": "rate(vector_search_total[5m])",
+            "legendFormat": "Search Rate"
+          }
+        ]
+      }
+    ]
+  }
+}

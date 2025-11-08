@@ -1,0 +1,119 @@
+name: Test Suite
+
+on:
+  push:
+    branches: [main, develop, 'claude/**']
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        python-version: ['3.11', '3.12']
+
+    services:
+      postgres:
+        image: pgvector/pgvector:pg16
+        env:
+          POSTGRES_DB: test_db
+          POSTGRES_USER: test_user
+          POSTGRES_PASSWORD: test_pass
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+      redis:
+        image: redis:7-alpine
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 6379:6379
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev,test]"
+
+      - name: Run database migrations
+        env:
+          DATABASE_URL: postgresql://test_user:test_pass@localhost:5432/test_db
+        run: |
+          alembic upgrade head
+
+      - name: Run linters
+        run: |
+          ruff check .
+          mypy core/ workflows/ skills/
+
+      - name: Run unit tests
+        env:
+          DATABASE_URL: postgresql://test_user:test_pass@localhost:5432/test_db
+          REDIS_URL: redis://localhost:6379/0
+        run: |
+          pytest tests/ -v --cov=core --cov=workflows --cov=skills \
+            --cov-report=xml --cov-report=term-missing
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          file: ./coverage.xml
+          flags: unittests
+          name: codecov-umbrella
+
+      - name: Run integration tests
+        env:
+          DATABASE_URL: postgresql://test_user:test_pass@localhost:5432/test_db
+          REDIS_URL: redis://localhost:6379/0
+        run: |
+          pytest tests/integration/ -v --timeout=30
+
+  validate-schemas:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Validate skill schemas
+        run: |
+          python -c "
+          import json
+          from pathlib import Path
+          schema_path = Path('skills/schema/skill.schema.json')
+          with open(schema_path) as f:
+              schema = json.load(f)
+          print(f'✓ Schema valid: {schema.get(\"title\", \"Unknown\")}')
+          "
+
+      - name: Validate skill registry
+        run: |
+          python -c "
+          import json
+          from pathlib import Path
+          registry_path = Path('skills/registry')
+          valid = 0
+          for skill_file in registry_path.glob('*.json'):
+              with open(skill_file) as f:
+                  skills = json.load(f)
+              valid += len(skills.get('skills', []))
+          print(f'✓ Validated {valid} skills across {len(list(registry_path.glob(\"*.json\")))} domains')
+          "

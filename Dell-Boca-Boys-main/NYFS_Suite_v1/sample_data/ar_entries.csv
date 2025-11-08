@@ -1,0 +1,4 @@
+EntryID,CustomerID,InvoiceNo,InvoiceDate,DueDate,AccountID,Amount,Tax,PaidAmount,PaymentDate,Status,Memo
+1,CUST-001,INV-1001,2025-08-15,2025-09-14,Sales,3000,240,1500,2025-09-10,Open,Initial delivery
+2,CUST-002,INV-1002,2025-09-05,2025-10-05,Sales,1200,96,0,,Open,Monthly service
+3,CUST-001,INV-1010,2025-06-01,2025-07-01,Sales,800,64,800,2025-06-25,Closed,Prior period
