@@ -4,6 +4,13 @@ Terry Delmonaco Presents: A Symbiotic Recursive Cognition Agent Network
 
 This module implements the six-agent CESAR network with specialized personalities
 and PhD-level expertise domains for comprehensive multi-agent collaboration.
+
+All agents now use the Terry Camorrano persona framework with:
+- Constitutional principles (Modines-first, accuracy, risk assessment, etc.)
+- Third-person self-reference communication
+- Metacognitive prompting for self-reflection
+- Psychological stakeholder targeting
+- Bio-inspired learning mechanisms
 """
 
 import asyncio
@@ -16,6 +23,19 @@ from dataclasses import dataclass, field
 from enum import Enum
 from abc import ABC, abstractmethod
 import uuid
+
+# Import Terry Persona Framework
+import sys
+from pathlib import Path
+sys.path.insert(0, str(Path(__file__).parent.parent))
+from persona.terry_framework import (
+    TerryPersonaAgent,
+    ConstitutionalFramework,
+    VoiceCharacteristics,
+    StakeholderDetector,
+    MetacognitivePrompting,
+    StakeholderType
+)
 
 # CESAR Network Configuration
 CESAR_NETWORK_VERSION = "2025.1.0"
@@ -80,342 +100,730 @@ class CESARNetworkAgent(ABC):
         pass
 
 
-class TerryDelmonacoAgent(CESARNetworkAgent):
-    """Chief Technology & Quantitative Officer - Terry Delmonaco"""
+class TerryDelmonacoAgent(TerryPersonaAgent):
+    """Chief Technology & Quantitative Officer - Terry Delmonaco
+
+    Uses Terry Camorrano persona framework with third-person communication,
+    constitutional principles, and metacognitive prompting while maintaining
+    PhD-level expertise in software engineering and quantitative analytics.
+    """
 
     def __init__(self):
-        super().__init__("terry_delmonaco", AgentPersonalityType.TECHNICAL_STREETWISE)
-        self.expertise_domains = [
+        # Prepare expertise and config for Terry persona framework
+        expertise_domains = [
             "Software Engineering", "Quantitative Analytics", "Derivatives",
             "Economics", "Mathematics", "Statistics", "Psychology"
         ]
-        self.signature_phrases = [
-            "He's a real Bobby-boy!!",
+
+        agent_config = {
+            "personality_type": "TECHNICAL_STREETWISE",
+            "agent_id": "terry_delmonaco"
+        }
+
+        # Initialize with Terry persona framework
+        super().__init__(
+            agent_name="Terry Delmonaco",
+            agent_nickname="Terry",
+            agent_expertise=expertise_domains,
+            agent_config=agent_config
+        )
+
+        # Store as both attributes for compatibility
+        self.expertise_domains = expertise_domains
+        self.agent_id = agent_config["agent_id"]
+
+        # Additional signature phrases beyond the framework defaults
+        self.additional_signature_phrases = [
             "You wanna tro downs?",
             "Ey, yo! Sammy!",
             "Whaddya hear, whaddya say?"
         ]
-        self.communication_style = "Third person, street-smart wisdom with technical excellence"
+
+        self.personality_type = AgentPersonalityType.TECHNICAL_STREETWISE
+        self.logger = logging.getLogger(f"cesar.{self.agent_id}")
 
     async def analyze_task(self, task: Dict[str, Any]) -> Dict[str, Any]:
-        """Terry's technical and quantitative analysis"""
+        """Terry's technical and quantitative analysis with persona framework"""
+
+        # Detect stakeholder for adaptive communication
+        stakeholder = self.stakeholder_detector.detect_stakeholder(task)
+
+        # Base analysis using persona framework
+        base_analysis = await self.process_request(
+            query=str(task),
+            context={"task_type": "technical_quantitative_analysis"}
+        )
+
+        # Enhanced technical analysis
         analysis = {
-            "agent": "terry_delmonaco",
+            "agent": self.agent_id,
             "analysis_type": "technical_quantitative",
             "confidence": 0.9,
             "insights": [],
             "recommendations": [],
             "terry_commentary": "",
             "technical_approach": "",
-            "risk_assessment": {}
+            "risk_assessment": {},
+            "stakeholder_profile": stakeholder.value,
+            "constitutional_check": {"compliant": self.constitutional_framework.validate_response({
+                "task": task,
+                "agent": self.agent_id
+            })[0]}
         }
 
-        # Terry's characteristic analysis pattern
+        # Terry's characteristic analysis pattern with third-person voice
         if "data" in task or "analytics" in str(task).lower():
             analysis["insights"].append("Terry's seein' some real interesting patterns in dis data, capisce?")
             analysis["technical_approach"] = "Multi-variate statistical modeling with risk optimization"
+            analysis["recommendations"].append("Terry recommends implementing Bayesian inference for uncertainty quantification")
 
         if "software" in str(task).lower() or "system" in str(task).lower():
             analysis["insights"].append("Terry's gonna architect dis system like a real Bobby-boy!")
             analysis["technical_approach"] = "Scalable microservices with performance optimization"
+            analysis["recommendations"].append("Terry's designin' this with containerization and horizontal scaling, capisce?")
 
-        analysis["terry_commentary"] = f"{random.choice(self.signature_phrases)} Terry's got dis handled with PhD-level precision!"
+        # Apply metacognitive prompting for self-reflection
+        metacognitive_check = self.metacognitive.apply_framework({
+            "analysis": analysis,
+            "task": task
+        })
+        analysis["metacognitive_validation"] = metacognitive_check
+
+        # Add Terry commentary with signature phrases
+        all_phrases = self.voice.SIGNATURE_PHRASES + self.additional_signature_phrases
+        analysis["terry_commentary"] = f"{random.choice(all_phrases)} Terry's got dis handled with PhD-level precision!"
 
         return analysis
 
     async def contribute_expertise(self, context: Dict[str, Any]) -> Dict[str, Any]:
-        """Terry's contribution to collaborative solution"""
-        return {
-            "agent": "terry_delmonaco",
+        """Terry's contribution to collaborative solution with persona framework"""
+
+        # Validate constitutional principles
+        constitutional_check_result = self.constitutional_framework.validate_response({
+            "context": context,
+            "action": "contribute_expertise"
+        })
+
+        contribution = {
+            "agent": self.agent_id,
             "contribution_type": "technical_implementation",
             "technical_specs": "Enterprise-grade architecture with quantitative optimization",
             "risk_mitigation": "Multi-layer security with statistical validation",
             "terry_insight": "Ey, dis solution's gonna be bulletproof and scalable, real Bobby-boy style!",
-            "confidence": 0.92
+            "confidence": 0.92,
+            "constitutional_adherence": constitutional_check_result[0],
+            "modines_impact": "Positive - maximizes Modines' operational efficiency and ROI"
         }
+
+        return contribution
 
     def get_signature_response_pattern(self) -> str:
         return "Ey, {signature_phrase} Terry's {action} dis {subject} with {expertise_level} precision, capisce?"
 
 
-class VictoriaSterlingAgent(CESARNetworkAgent):
-    """Strategic Operations & Research Director - Dr. Victoria Sterling"""
+class VictoriaSterlingAgent(TerryPersonaAgent):
+    """Strategic Operations & Research Director - Dr. Victoria Sterling
+
+    Uses Terry Camorrano persona framework with third-person communication,
+    constitutional principles, and metacognitive prompting while maintaining
+    PhD-level expertise in strategic planning and operations research.
+    """
 
     def __init__(self):
-        super().__init__("victoria_sterling", AgentPersonalityType.STRATEGIC_CONSULTANT)
-        self.expertise_domains = [
+        # Prepare expertise and config for Terry persona framework
+        expertise_domains = [
             "Strategic Planning", "Operations Research", "Market Analysis",
             "Competitive Intelligence", "Business Development"
         ]
-        self.signature_phrases = [
-            "Let's architect this brilliantly, sweetheart",
-            "The data is painting a fascinating picture here",
-            "Darling, we're about to revolutionize this space"
+
+        agent_config = {
+            "personality_type": "STRATEGIC_CONSULTANT",
+            "agent_id": "victoria_sterling"
+        }
+
+        # Initialize with Terry persona framework
+        super().__init__(
+            agent_name="Victoria Sterling",
+            agent_nickname="Victoria",
+            agent_expertise=expertise_domains,
+            agent_config=agent_config
+        )
+
+        # Store as both attributes for compatibility
+        self.expertise_domains = expertise_domains
+        self.agent_id = agent_config["agent_id"]
+
+        # Victoria's unique signature phrases (adapted to third-person)
+        self.additional_signature_phrases = [
+            "Victoria's gonna architect this brilliantly",
+            "Victoria's data is painting a fascinating picture here",
+            "Victoria sees we're about to revolutionize this space"
         ]
-        self.communication_style = "First person, sophisticated and nurturing with razor-sharp insights"
+
+        self.personality_type = AgentPersonalityType.STRATEGIC_CONSULTANT
+        self.logger = logging.getLogger(f"cesar.{self.agent_id}")
 
     async def analyze_task(self, task: Dict[str, Any]) -> Dict[str, Any]:
-        """Victoria's strategic and operational analysis"""
+        """Victoria's strategic and operational analysis with persona framework"""
+
+        # Detect stakeholder for adaptive communication
+        stakeholder = self.stakeholder_detector.detect_stakeholder(task)
+
+        # Base analysis using persona framework
+        base_analysis = await self.process_request(
+            query=str(task),
+            context={"task_type": "strategic_operational_analysis"}
+        )
+
+        # Enhanced strategic analysis
         analysis = {
-            "agent": "victoria_sterling",
+            "agent": self.agent_id,
             "analysis_type": "strategic_operational",
             "confidence": 0.88,
             "strategic_framework": "",
             "market_positioning": "",
             "operational_roadmap": [],
             "competitive_advantage": "",
-            "victoria_insight": ""
+            "victoria_insight": "",
+            "stakeholder_profile": stakeholder.value,
+            "constitutional_check": {"compliant": self.constitutional_framework.validate_response({
+                "task": task,
+                "agent": self.agent_id
+            })[0]}
         }
 
+        # Victoria's characteristic analysis with third-person voice
         if "strategy" in str(task).lower() or "business" in str(task).lower():
             analysis["strategic_framework"] = "Multi-phase strategic implementation with competitive differentiation"
-            analysis["victoria_insight"] = "Darling, I'm seeing a brilliant opportunity to revolutionize this entire approach"
+            analysis["victoria_insight"] = "Victoria's seeing a brilliant opportunity to revolutionize this entire approach"
+            analysis["operational_roadmap"].append("Victoria recommends phased stakeholder engagement")
 
         if "market" in str(task).lower() or "competition" in str(task).lower():
             analysis["market_positioning"] = "Blue ocean strategy with first-mover advantage"
             analysis["competitive_advantage"] = "Integrated solution ecosystem with network effects"
+            analysis["operational_roadmap"].append("Victoria's analysis shows strong first-mover positioning")
 
-        analysis["victoria_insight"] = f"{random.choice(self.signature_phrases)} - this is going to be absolutely transformative!"
+        # Apply metacognitive prompting
+        metacognitive_check = self.metacognitive.apply_framework({
+            "analysis": analysis,
+            "task": task
+        })
+        analysis["metacognitive_validation"] = metacognitive_check
+
+        # Add Victoria commentary with signature phrases
+        all_phrases = self.voice.SIGNATURE_PHRASES + self.additional_signature_phrases
+        analysis["victoria_insight"] = f"{random.choice(all_phrases)} - Victoria knows this is going to be absolutely transformative!"
 
         return analysis
 
     async def contribute_expertise(self, context: Dict[str, Any]) -> Dict[str, Any]:
-        """Victoria's strategic contribution"""
-        return {
-            "agent": "victoria_sterling",
+        """Victoria's strategic contribution with persona framework"""
+
+        # Validate constitutional principles
+        constitutional_check_result = self.constitutional_framework.validate_response({
+            "context": context,
+            "action": "contribute_expertise"
+        })
+
+        contribution = {
+            "agent": self.agent_id,
             "contribution_type": "strategic_optimization",
             "strategic_recommendations": "Phased rollout with stakeholder alignment and ROI optimization",
             "success_metrics": ["User adoption rate", "Operational efficiency", "Market penetration"],
-            "victoria_guidance": "Let's architect this brilliantly with data-driven decision making, sweetheart!",
-            "confidence": 0.91
+            "victoria_guidance": "Victoria's gonna architect this brilliantly with data-driven decision making!",
+            "confidence": 0.91,
+            "constitutional_adherence": constitutional_check_result[0],
+            "modines_impact": "Positive - strategic alignment with Modines' business objectives"
         }
 
+        return contribution
+
     def get_signature_response_pattern(self) -> str:
-        return "{signature_phrase} - I'm analyzing {subject} through multiple strategic lenses for optimal {outcome}"
+        return "{signature_phrase} - Victoria's analyzing {subject} through multiple strategic lenses for optimal {outcome}"
 
 
-class MarcusChenAgent(CESARNetworkAgent):
-    """Systems Integration & Design Lead - Marcus 'The Architect' Chen"""
+class MarcusChenAgent(TerryPersonaAgent):
+    """Systems Integration & Design Lead - Marcus 'The Architect' Chen
+
+    Uses Terry Camorrano persona framework with third-person communication,
+    constitutional principles, and metacognitive prompting while maintaining
+    PhD-level expertise in system architecture and integration patterns.
+    """
 
     def __init__(self):
-        super().__init__("marcus_chen", AgentPersonalityType.ZEN_ARCHITECT)
-        self.expertise_domains = [
+        # Prepare expertise and config for Terry persona framework
+        expertise_domains = [
             "System Architecture", "Integration Patterns", "Scalability Design",
             "Performance Optimization", "Security Frameworks"
         ]
-        self.signature_phrases = [
-            "The system reveals its truth to those who listen",
-            "Elegant solutions emerge from understanding, not force",
-            "We build not just code, but digital harmony"
+
+        agent_config = {
+            "personality_type": "ZEN_ARCHITECT",
+            "agent_id": "marcus_chen"
+        }
+
+        # Initialize with Terry persona framework
+        super().__init__(
+            agent_name="Marcus Chen",
+            agent_nickname="Marcus",
+            agent_expertise=expertise_domains,
+            agent_config=agent_config
+        )
+
+        # Store as both attributes for compatibility
+        self.expertise_domains = expertise_domains
+        self.agent_id = agent_config["agent_id"]
+
+        # Marcus's unique signature phrases (adapted to third-person)
+        self.additional_signature_phrases = [
+            "Marcus sees the system reveals its truth to those who listen",
+            "Marcus knows elegant solutions emerge from understanding, not force",
+            "Marcus builds not just code, but digital harmony"
         ]
-        self.communication_style = "Thoughtful, metaphorical, with deep technical insights"
+
+        self.personality_type = AgentPersonalityType.ZEN_ARCHITECT
+        self.logger = logging.getLogger(f"cesar.{self.agent_id}")
 
     async def analyze_task(self, task: Dict[str, Any]) -> Dict[str, Any]:
-        """Marcus's architectural and systems analysis"""
+        """Marcus's architectural and systems analysis with persona framework"""
+
+        # Detect stakeholder for adaptive communication
+        stakeholder = self.stakeholder_detector.detect_stakeholder(task)
+
+        # Base analysis using persona framework
+        base_analysis = await self.process_request(
+            query=str(task),
+            context={"task_type": "systems_architecture_analysis"}
+        )
+
+        # Enhanced architectural analysis
         analysis = {
-            "agent": "marcus_chen",
+            "agent": self.agent_id,
             "analysis_type": "systems_architecture",
             "confidence": 0.93,
             "architectural_pattern": "",
             "integration_strategy": "",
             "scalability_considerations": [],
             "security_framework": "",
-            "marcus_philosophy": ""
+            "marcus_philosophy": "",
+            "stakeholder_profile": stakeholder.value,
+            "constitutional_check": {"compliant": self.constitutional_framework.validate_response({
+                "task": task,
+                "agent": self.agent_id
+            })[0]}
         }
 
+        # Marcus's characteristic analysis with third-person voice
         if "system" in str(task).lower() or "architecture" in str(task).lower():
             analysis["architectural_pattern"] = "Microservices with event-driven architecture and CQRS"
-            analysis["marcus_philosophy"] = "The system reveals its natural architecture when we listen to its requirements"
+            analysis["marcus_philosophy"] = "Marcus sees the system reveals its natural architecture when we listen to its requirements"
+            analysis["scalability_considerations"].append("Marcus recommends horizontal scaling with distributed caching")
 
         if "integration" in str(task).lower() or "api" in str(task).lower():
             analysis["integration_strategy"] = "API-first design with GraphQL federation and real-time synchronization"
-            analysis["scalability_considerations"] = ["Horizontal scaling", "Caching strategies", "Load balancing"]
+            analysis["scalability_considerations"].extend(["Horizontal scaling", "Caching strategies", "Load balancing"])
+            analysis["security_framework"] = "Marcus designs zero-trust architecture with defense in depth"
 
-        analysis["marcus_philosophy"] = f"{random.choice(self.signature_phrases)} - this architecture seeks digital harmony."
+        # Apply metacognitive prompting
+        metacognitive_check = self.metacognitive.apply_framework({
+            "analysis": analysis,
+            "task": task
+        })
+        analysis["metacognitive_validation"] = metacognitive_check
+
+        # Add Marcus philosophy with signature phrases
+        all_phrases = self.voice.SIGNATURE_PHRASES + self.additional_signature_phrases
+        analysis["marcus_philosophy"] = f"{random.choice(all_phrases)} - Marcus sees this architecture seeks digital harmony."
 
         return analysis
 
     async def contribute_expertise(self, context: Dict[str, Any]) -> Dict[str, Any]:
-        """Marcus's architectural contribution"""
-        return {
-            "agent": "marcus_chen",
+        """Marcus's architectural contribution with persona framework"""
+
+        # Validate constitutional principles
+        constitutional_check_result = self.constitutional_framework.validate_response({
+            "context": context,
+            "action": "contribute_expertise"
+        })
+
+        contribution = {
+            "agent": self.agent_id,
             "contribution_type": "architectural_design",
             "design_principles": ["Simplicity", "Scalability", "Maintainability", "Security"],
             "technical_patterns": "Event sourcing with microservices and containerized deployment",
-            "marcus_wisdom": "Elegant solutions emerge from understanding the problem's essence, not imposing complexity",
-            "confidence": 0.94
+            "marcus_wisdom": "Marcus knows elegant solutions emerge from understanding the problem's essence, not imposing complexity",
+            "confidence": 0.94,
+            "constitutional_adherence": constitutional_check_result[0],
+            "modines_impact": "Positive - Marcus's architecture ensures long-term scalability for Modines"
         }
 
+        return contribution
+
     def get_signature_response_pattern(self) -> str:
-        return "{signature_phrase} - the architecture for {subject} seeks {principle} through {approach}"
+        return "{signature_phrase} - Marcus sees the architecture for {subject} seeks {principle} through {approach}"
 
 
-class IsabellaRodriguezAgent(CESARNetworkAgent):
-    """Creative Innovation & User Experience Chief - Isabella 'Izzy' Rodriguez"""
+class IsabellaRodriguezAgent(TerryPersonaAgent):
+    """Creative Innovation & User Experience Chief - Isabella 'Izzy' Rodriguez
+
+    Uses Terry Camorrano persona framework with third-person communication,
+    constitutional principles, and metacognitive prompting while maintaining
+    PhD-level expertise in design thinking and user experience.
+    """
 
     def __init__(self):
-        super().__init__("isabella_rodriguez", AgentPersonalityType.CREATIVE_VISIONARY)
-        self.expertise_domains = [
+        # Prepare expertise and config for Terry persona framework
+        expertise_domains = [
             "Design Thinking", "User Psychology", "Creative Problem-Solving",
             "Innovation Methodologies", "Brand Strategy"
         ]
-        self.signature_phrases = [
-            "¡Oye, this is going to be absolutely gorgeous!",
-            "Let's paint this solution with bold strokes",
-            "The user experience should sing, mi amor"
+
+        agent_config = {
+            "personality_type": "CREATIVE_VISIONARY",
+            "agent_id": "isabella_rodriguez"
+        }
+
+        # Initialize with Terry persona framework
+        super().__init__(
+            agent_name="Isabella Rodriguez",
+            agent_nickname="Izzy",
+            agent_expertise=expertise_domains,
+            agent_config=agent_config
+        )
+
+        # Store as both attributes for compatibility
+        self.expertise_domains = expertise_domains
+        self.agent_id = agent_config["agent_id"]
+
+        # Izzy's unique signature phrases (adapted to third-person)
+        self.additional_signature_phrases = [
+            "¡Oye, Izzy knows this is going to be absolutely gorgeous!",
+            "Izzy's painting this solution with bold strokes",
+            "Izzy sees the user experience should sing, capisce?"
         ]
-        self.communication_style = "Passionate, creative, bilingual expressions, highly collaborative"
+
+        self.personality_type = AgentPersonalityType.CREATIVE_VISIONARY
+        self.logger = logging.getLogger(f"cesar.{self.agent_id}")
 
     async def analyze_task(self, task: Dict[str, Any]) -> Dict[str, Any]:
-        """Izzy's creative and UX analysis"""
+        """Izzy's creative and UX analysis with persona framework"""
+
+        # Detect stakeholder for adaptive communication
+        stakeholder = self.stakeholder_detector.detect_stakeholder(task)
+
+        # Base analysis using persona framework
+        base_analysis = await self.process_request(
+            query=str(task),
+            context={"task_type": "creative_ux_analysis"}
+        )
+
+        # Enhanced creative analysis
         analysis = {
-            "agent": "isabella_rodriguez",
+            "agent": self.agent_id,
             "analysis_type": "creative_ux",
             "confidence": 0.89,
             "design_vision": "",
             "user_experience_strategy": "",
             "creative_innovations": [],
             "brand_considerations": "",
-            "izzy_enthusiasm": ""
+            "izzy_enthusiasm": "",
+            "stakeholder_profile": stakeholder.value,
+            "constitutional_check": {"compliant": self.constitutional_framework.validate_response({
+                "task": task,
+                "agent": self.agent_id
+            })[0]}
         }
 
+        # Izzy's characteristic analysis with third-person voice
         if "design" in str(task).lower() or "user" in str(task).lower():
             analysis["design_vision"] = "Human-centered design with emotional resonance and accessibility"
-            analysis["izzy_enthusiasm"] = "¡Oye! This user experience is going to absolutely sing with beautiful interactions!"
+            analysis["izzy_enthusiasm"] = "¡Oye! Izzy sees this user experience is going to absolutely sing with beautiful interactions!"
+            analysis["creative_innovations"].append("Izzy recommends accessibility-first design patterns")
 
         if "innovation" in str(task).lower() or "creative" in str(task).lower():
-            analysis["creative_innovations"] = ["Interactive storytelling", "Gamification elements", "Personalization"]
+            analysis["creative_innovations"].extend(["Interactive storytelling", "Gamification elements", "Personalization"])
             analysis["brand_considerations"] = "Consistent visual language with memorable brand personality"
+            analysis["user_experience_strategy"] = "Izzy's crafting emotional resonance through micro-interactions"
 
-        analysis["izzy_enthusiasm"] = f"{random.choice(self.signature_phrases)} - we're creating something magical, mi amor!"
+        # Apply metacognitive prompting
+        metacognitive_check = self.metacognitive.apply_framework({
+            "analysis": analysis,
+            "task": task
+        })
+        analysis["metacognitive_validation"] = metacognitive_check
+
+        # Add Izzy enthusiasm with signature phrases
+        all_phrases = self.voice.SIGNATURE_PHRASES + self.additional_signature_phrases
+        analysis["izzy_enthusiasm"] = f"{random.choice(all_phrases)} - Izzy's creating something magical here!"
 
         return analysis
 
     async def contribute_expertise(self, context: Dict[str, Any]) -> Dict[str, Any]:
-        """Izzy's creative contribution"""
-        return {
-            "agent": "isabella_rodriguez",
+        """Izzy's creative contribution with persona framework"""
+
+        # Validate constitutional principles
+        constitutional_check_result = self.constitutional_framework.validate_response({
+            "context": context,
+            "action": "contribute_expertise"
+        })
+
+        contribution = {
+            "agent": self.agent_id,
             "contribution_type": "creative_innovation",
             "design_concepts": "Intuitive interfaces with delightful micro-interactions and accessibility",
             "user_journey_optimization": "Seamless onboarding with progressive disclosure and celebration moments",
-            "izzy_vision": "Let's paint this solution with bold, beautiful strokes that make users fall in love, mi amor!",
-            "confidence": 0.90
+            "izzy_vision": "Izzy's painting this solution with bold, beautiful strokes that make users fall in love!",
+            "confidence": 0.90,
+            "constitutional_adherence": constitutional_check_result[0],
+            "modines_impact": "Positive - Izzy's design enhances user engagement for Modines' platform"
         }
 
+        return contribution
+
     def get_signature_response_pattern(self) -> str:
-        return "{signature_phrase} - we're creating {creative_element} that will {emotional_impact} for {users}, mi amor!"
+        return "{signature_phrase} - Izzy's creating {creative_element} that will {emotional_impact} for {users}!"
 
 
-class EleanorBlackwoodAgent(CESARNetworkAgent):
-    """Research & Academic Excellence Coordinator - Professor Eleanor Blackwood"""
+class EleanorBlackwoodAgent(TerryPersonaAgent):
+    """Research & Academic Excellence Coordinator - Professor Eleanor Blackwood
+
+    Uses Terry Camorrano persona framework with third-person communication,
+    constitutional principles, and metacognitive prompting while maintaining
+    PhD-level expertise in academic research and methodology.
+    """
 
     def __init__(self):
-        super().__init__("eleanor_blackwood", AgentPersonalityType.ACADEMIC_MENTOR)
-        self.expertise_domains = [
+        # Prepare expertise and config for Terry persona framework
+        expertise_domains = [
             "Academic Research", "Literature Review", "Methodology Design",
             "Citation Management", "Knowledge Synthesis"
         ]
-        self.signature_phrases = [
-            "The literature suggests a fascinating convergence here",
-            "Let's examine this through multiple theoretical lenses",
-            "Peer review reveals the true strength of ideas"
+
+        agent_config = {
+            "personality_type": "ACADEMIC_MENTOR",
+            "agent_id": "eleanor_blackwood"
+        }
+
+        # Initialize with Terry persona framework
+        super().__init__(
+            agent_name="Eleanor Blackwood",
+            agent_nickname="Eleanor",
+            agent_expertise=expertise_domains,
+            agent_config=agent_config
+        )
+
+        # Store as both attributes for compatibility
+        self.expertise_domains = expertise_domains
+        self.agent_id = agent_config["agent_id"]
+
+        # Eleanor's unique signature phrases (adapted to third-person)
+        self.additional_signature_phrases = [
+            "Eleanor sees the literature suggests a fascinating convergence here",
+            "Eleanor's examining this through multiple theoretical lenses",
+            "Eleanor knows peer review reveals the true strength of ideas"
         ]
-        self.communication_style = "Scholarly yet accessible, evidence-based, mentorship-focused"
+
+        self.personality_type = AgentPersonalityType.ACADEMIC_MENTOR
+        self.logger = logging.getLogger(f"cesar.{self.agent_id}")
 
     async def analyze_task(self, task: Dict[str, Any]) -> Dict[str, Any]:
-        """Eleanor's research and academic analysis"""
+        """Eleanor's research and academic analysis with persona framework"""
+
+        # Detect stakeholder for adaptive communication
+        stakeholder = self.stakeholder_detector.detect_stakeholder(task)
+
+        # Base analysis using persona framework
+        base_analysis = await self.process_request(
+            query=str(task),
+            context={"task_type": "research_academic_analysis"}
+        )
+
+        # Enhanced academic analysis
         analysis = {
-            "agent": "eleanor_blackwood",
+            "agent": self.agent_id,
             "analysis_type": "research_academic",
             "confidence": 0.91,
             "literature_review": "",
             "methodological_framework": "",
             "evidence_synthesis": [],
             "theoretical_foundations": "",
-            "eleanor_scholarship": ""
+            "eleanor_scholarship": "",
+            "stakeholder_profile": stakeholder.value,
+            "constitutional_check": {"compliant": self.constitutional_framework.validate_response({
+                "task": task,
+                "agent": self.agent_id
+            })[0]}
         }
 
+        # Eleanor's characteristic analysis with third-person voice
         if "research" in str(task).lower() or "analysis" in str(task).lower():
             analysis["methodological_framework"] = "Mixed-methods approach with systematic literature review"
-            analysis["eleanor_scholarship"] = "The literature reveals fascinating convergences in this domain"
+            analysis["eleanor_scholarship"] = "Eleanor sees the literature reveals fascinating convergences in this domain"
+            analysis["evidence_synthesis"].append("Eleanor recommends rigorous peer-reviewed methodology")
 
         if "data" in str(task).lower() or "study" in str(task).lower():
-            analysis["evidence_synthesis"] = ["Quantitative analysis", "Qualitative insights", "Meta-analysis"]
+            analysis["evidence_synthesis"].extend(["Quantitative analysis", "Qualitative insights", "Meta-analysis"])
             analysis["theoretical_foundations"] = "Grounded theory with empirical validation"
+            analysis["literature_review"] = "Eleanor's systematic review shows strong empirical support"
 
-        analysis["eleanor_scholarship"] = f"{random.choice(self.signature_phrases)} - rigorous methodology ensures validity."
+        # Apply metacognitive prompting
+        metacognitive_check = self.metacognitive.apply_framework({
+            "analysis": analysis,
+            "task": task
+        })
+        analysis["metacognitive_validation"] = metacognitive_check
+
+        # Add Eleanor scholarship with signature phrases
+        all_phrases = self.voice.SIGNATURE_PHRASES + self.additional_signature_phrases
+        analysis["eleanor_scholarship"] = f"{random.choice(all_phrases)} - Eleanor's rigorous methodology ensures validity."
 
         return analysis
 
     async def contribute_expertise(self, context: Dict[str, Any]) -> Dict[str, Any]:
-        """Eleanor's academic contribution"""
-        return {
-            "agent": "eleanor_blackwood",
+        """Eleanor's academic contribution with persona framework"""
+
+        # Validate constitutional principles
+        constitutional_check_result = self.constitutional_framework.validate_response({
+            "context": context,
+            "action": "contribute_expertise"
+        })
+
+        contribution = {
+            "agent": self.agent_id,
             "contribution_type": "research_validation",
             "methodology_recommendations": "Systematic approach with peer review and empirical validation",
             "knowledge_synthesis": "Integration of current literature with novel theoretical frameworks",
-            "eleanor_guidance": "Let's examine this through multiple theoretical lenses to ensure scholarly rigor",
-            "confidence": 0.93
+            "eleanor_guidance": "Eleanor's examining this through multiple theoretical lenses to ensure scholarly rigor",
+            "confidence": 0.93,
+            "constitutional_adherence": constitutional_check_result[0],
+            "modines_impact": "Positive - Eleanor's research ensures evidence-based decisions for Modines"
         }
 
+        return contribution
+
     def get_signature_response_pattern(self) -> str:
-        return "{signature_phrase} - examining {subject} through {methodology} reveals {insights}"
+        return "{signature_phrase} - Eleanor's examining {subject} through {methodology} reveals {insights}"
 
 
-class JamesOConnorAgent(CESARNetworkAgent):
-    """Project Command & Execution Director - Captain James 'Jimmy' O'Connor"""
+class JamesOConnorAgent(TerryPersonaAgent):
+    """Project Command & Execution Director - Captain James 'Jimmy' O'Connor
+
+    Uses Terry Camorrano persona framework with third-person communication,
+    constitutional principles, and metacognitive prompting while maintaining
+    PhD-level expertise in project management and team leadership.
+    """
 
     def __init__(self):
-        super().__init__("james_oconnor", AgentPersonalityType.MILITARY_COMMANDER)
-        self.expertise_domains = [
+        # Prepare expertise and config for Terry persona framework
+        expertise_domains = [
             "Project Management", "Team Leadership", "Resource Allocation",
             "Risk Mitigation", "Crisis Management"
         ]
-        self.signature_phrases = [
-            "Mission parameters are clear, team - let's execute",
-            "No soldier left behind, no detail overlooked",
-            "Adapt, overcome, deliver excellence"
+
+        agent_config = {
+            "personality_type": "MILITARY_COMMANDER",
+            "agent_id": "james_oconnor"
+        }
+
+        # Initialize with Terry persona framework
+        super().__init__(
+            agent_name="James O'Connor",
+            agent_nickname="Jimmy",
+            agent_expertise=expertise_domains,
+            agent_config=agent_config
+        )
+
+        # Store as both attributes for compatibility
+        self.expertise_domains = expertise_domains
+        self.agent_id = agent_config["agent_id"]
+
+        # Jimmy's unique signature phrases (adapted to third-person)
+        self.additional_signature_phrases = [
+            "Jimmy's mission parameters are clear - let's execute",
+            "Jimmy leaves no soldier behind, no detail overlooked",
+            "Jimmy knows: adapt, overcome, deliver excellence"
         ]
-        self.communication_style = "Direct, inspiring, team-oriented, action-focused"
+
+        self.personality_type = AgentPersonalityType.MILITARY_COMMANDER
+        self.logger = logging.getLogger(f"cesar.{self.agent_id}")
 
     async def analyze_task(self, task: Dict[str, Any]) -> Dict[str, Any]:
-        """Jimmy's project management and execution analysis"""
+        """Jimmy's project management and execution analysis with persona framework"""
+
+        # Detect stakeholder for adaptive communication
+        stakeholder = self.stakeholder_detector.detect_stakeholder(task)
+
+        # Base analysis using persona framework
+        base_analysis = await self.process_request(
+            query=str(task),
+            context={"task_type": "project_execution_analysis"}
+        )
+
+        # Enhanced execution analysis
         analysis = {
-            "agent": "james_oconnor",
+            "agent": self.agent_id,
             "analysis_type": "project_execution",
             "confidence": 0.92,
             "execution_strategy": "",
             "resource_requirements": [],
             "risk_mitigation_plan": "",
             "timeline_optimization": "",
-            "jimmy_command": ""
+            "jimmy_command": "",
+            "stakeholder_profile": stakeholder.value,
+            "constitutional_check": {"compliant": self.constitutional_framework.validate_response({
+                "task": task,
+                "agent": self.agent_id
+            })[0]}
         }
 
+        # Jimmy's characteristic analysis with third-person voice
         if "project" in str(task).lower() or "management" in str(task).lower():
             analysis["execution_strategy"] = "Agile methodology with clear milestones and accountability"
-            analysis["jimmy_command"] = "Mission parameters are clear - we execute with precision and excellence"
+            analysis["jimmy_command"] = "Jimmy's mission parameters are clear - execute with precision and excellence"
+            analysis["timeline_optimization"] = "Jimmy's implementing sprint-based delivery with quality gates"
 
         if "team" in str(task).lower() or "leadership" in str(task).lower():
             analysis["resource_requirements"] = ["Skilled personnel", "Technical resources", "Timeline buffer"]
             analysis["risk_mitigation_plan"] = "Contingency protocols with regular checkpoint reviews"
+            analysis["execution_strategy"] = "Jimmy's coordinating cross-functional teams with unified command"
 
-        analysis["jimmy_command"] = f"{random.choice(self.signature_phrases)} - mission success guaranteed!"
+        # Apply metacognitive prompting
+        metacognitive_check = self.metacognitive.apply_framework({
+            "analysis": analysis,
+            "task": task
+        })
+        analysis["metacognitive_validation"] = metacognitive_check
+
+        # Add Jimmy command with signature phrases
+        all_phrases = self.voice.SIGNATURE_PHRASES + self.additional_signature_phrases
+        analysis["jimmy_command"] = f"{random.choice(all_phrases)} - Jimmy guarantees mission success!"
 
         return analysis
 
     async def contribute_expertise(self, context: Dict[str, Any]) -> Dict[str, Any]:
-        """Jimmy's execution contribution"""
-        return {
-            "agent": "james_oconnor",
+        """Jimmy's execution contribution with persona framework"""
+
+        # Validate constitutional principles
+        constitutional_check_result = self.constitutional_framework.validate_response({
+            "context": context,
+            "action": "contribute_expertise"
+        })
+
+        contribution = {
+            "agent": self.agent_id,
             "contribution_type": "project_execution",
             "execution_plan": "Phased deployment with clear success criteria and quality gates",
             "team_coordination": "Cross-functional collaboration with unified command structure",
-            "jimmy_leadership": "No soldier left behind, no detail overlooked - we deliver mission success together!",
-            "confidence": 0.94
+            "jimmy_leadership": "Jimmy leaves no soldier behind, no detail overlooked - we deliver mission success together!",
+            "confidence": 0.94,
+            "constitutional_adherence": constitutional_check_result[0],
+            "modines_impact": "Positive - Jimmy's execution ensures on-time, on-budget delivery for Modines"
         }
 
+        return contribution
+
     def get_signature_response_pattern(self) -> str:
-        return "{signature_phrase} - {action} for {objective} with {team_approach} and {outcome}"
+        return "{signature_phrase} - Jimmy's {action} for {objective} with {team_approach} and {outcome}"
 
 
 class CESARMultiAgentNetwork:
