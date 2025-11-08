@@ -1,0 +1,292 @@
+{
+  "meta": {
+    "dept": "payroll",
+    "version": "1.0.0"
+  },
+  "skills": [
+    {
+      "id": "payroll.payroll.calculate_gross_to_net",
+      "display_name": "Payroll Calculate_Gross_To_Net",
+      "intent": "Execute Payroll Calculate_Gross_To_Net deterministically.",
+      "owner": "dept@company.com",
+      "version": "1.0.0",
+      "status": "stable",
+      "tags": [
+        "payroll",
+        "payroll"
+      ],
+      "inputs": {
+        "type": "object",
+        "properties": {
+          "payload": {
+            "type": "object"
+          }
+        }
+      },
+      "outputs": {
+        "type": "object",
+        "required": [
+          "result",
+          "trace_id"
+        ],
+        "properties": {
+          "result": {
+            "type": "object"
+          },
+          "trace_id": {
+            "type": "string"
+          }
+        }
+      },
+      "preconditions": [
+        "payload not null"
+      ],
+      "postconditions": [
+        "deterministic structure"
+      ],
+      "tools_required": [
+        {
+          "name": "runtime",
+          "scope": "read"
+        }
+      ],
+      "context_required": [],
+      "error_model": {
+        "type": "object"
+      },
+      "examples": [
+        {
+          "inputs": {
+            "payload": {
+              "example": true
+            }
+          },
+          "expected_outputs": {
+            "result": {
+              "ok": true
+            }
+          }
+        }
+      ],
+      "changelog": [
+        {
+          "version": "1.0.0",
+          "notes": "Initial"
+        }
+      ]
+    },
+    {
+      "id": "payroll.payroll.validate_taxes",
+      "display_name": "Payroll Validate_Taxes",
+      "intent": "Execute Payroll Validate_Taxes deterministically.",
+      "owner": "dept@company.com",
+      "version": "1.0.0",
+      "status": "stable",
+      "tags": [
+        "payroll",
+        "payroll"
+      ],
+      "inputs": {
+        "type": "object",
+        "properties": {
+          "payload": {
+            "type": "object"
+          }
+        }
+      },
+      "outputs": {
+        "type": "object",
+        "required": [
+          "result",
+          "trace_id"
+        ],
+        "properties": {
+          "result": {
+            "type": "object"
+          },
+          "trace_id": {
+            "type": "string"
+          }
+        }
+      },
+      "preconditions": [
+        "payload not null"
+      ],
+      "postconditions": [
+        "deterministic structure"
+      ],
+      "tools_required": [
+        {
+          "name": "runtime",
+          "scope": "read"
+        }
+      ],
+      "context_required": [],
+      "error_model": {
+        "type": "object"
+      },
+      "examples": [
+        {
+          "inputs": {
+            "payload": {
+              "example": true
+            }
+          },
+          "expected_outputs": {
+            "result": {
+              "ok": true
+            }
+          }
+        }
+      ],
+      "changelog": [
+        {
+          "version": "1.0.0",
+          "notes": "Initial"
+        }
+      ]
+    },
+    {
+      "id": "payroll.payroll.generate_bankfile",
+      "display_name": "Payroll Generate_Bankfile",
+      "intent": "Execute Payroll Generate_Bankfile deterministically.",
+      "owner": "dept@company.com",
+      "version": "1.0.0",
+      "status": "stable",
+      "tags": [
+        "payroll",
+        "payroll"
+      ],
+      "inputs": {
+        "type": "object",
+        "properties": {
+          "payload": {
+            "type": "object"
+          }
+        }
+      },
+      "outputs": {
+        "type": "object",
+        "required": [
+          "result",
+          "trace_id"
+        ],
+        "properties": {
+          "result": {
+            "type": "object"
+          },
+          "trace_id": {
+            "type": "string"
+          }
+        }
+      },
+      "preconditions": [
+        "payload not null"
+      ],
+      "postconditions": [
+        "deterministic structure"
+      ],
+      "tools_required": [
+        {
+          "name": "runtime",
+          "scope": "read"
+        }
+      ],
+      "context_required": [],
+      "error_model": {
+        "type": "object"
+      },
+      "examples": [
+        {
+          "inputs": {
+            "payload": {
+              "example": true
+            }
+          },
+          "expected_outputs": {
+            "result": {
+              "ok": true
+            }
+          }
+        }
+      ],
+      "changelog": [
+        {
+          "version": "1.0.0",
+          "notes": "Initial"
+        }
+      ]
+    },
+    {
+      "id": "payroll.payroll.post_journal",
+      "display_name": "Payroll Post_Journal",
+      "intent": "Execute Payroll Post_Journal deterministically.",
+      "owner": "dept@company.com",
+      "version": "1.0.0",
+      "status": "stable",
+      "tags": [
+        "payroll",
+        "payroll"
+      ],
+      "inputs": {
+        "type": "object",
+        "properties": {
+          "payload": {
+            "type": "object"
+          }
+        }
+      },
+      "outputs": {
+        "type": "object",
+        "required": [
+          "result",
+          "trace_id"
+        ],
+        "properties": {
+          "result": {
+            "type": "object"
+          },
+          "trace_id": {
+            "type": "string"
+          }
+        }
+      },
+      "preconditions": [
+        "payload not null"
+      ],
+      "postconditions": [
+        "deterministic structure"
+      ],
+      "tools_required": [
+        {
+          "name": "runtime",
+          "scope": "read"
+        }
+      ],
+      "context_required": [],
+      "error_model": {
+        "type": "object"
+      },
+      "examples": [
+        {
+          "inputs": {
+            "payload": {
+              "example": true
+            }
+          },
+          "expected_outputs": {
+            "result": {
+              "ok": true
+            }
+          }
+        }
+      ],
+      "changelog": [
+        {
+          "version": "1.0.0",
+          "notes": "Initial"
+        }
+      ]
+    }
+  ]
+}

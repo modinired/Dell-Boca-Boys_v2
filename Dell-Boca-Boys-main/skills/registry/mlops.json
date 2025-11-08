@@ -1,0 +1,292 @@
+{
+  "meta": {
+    "dept": "mlops",
+    "version": "1.0.0"
+  },
+  "skills": [
+    {
+      "id": "mlops.mlops.dataset_version",
+      "display_name": "Mlops Dataset_Version",
+      "intent": "Execute Mlops Dataset_Version deterministically.",
+      "owner": "dept@company.com",
+      "version": "1.0.0",
+      "status": "stable",
+      "tags": [
+        "mlops",
+        "mlops"
+      ],
+      "inputs": {
+        "type": "object",
+        "properties": {
+          "payload": {
+            "type": "object"
+          }
+        }
+      },
+      "outputs": {
+        "type": "object",
+        "required": [
+          "result",
+          "trace_id"
+        ],
+        "properties": {
+          "result": {
+            "type": "object"
+          },
+          "trace_id": {
+            "type": "string"
+          }
+        }
+      },
+      "preconditions": [
+        "payload not null"
+      ],
+      "postconditions": [
+        "deterministic structure"
+      ],
+      "tools_required": [
+        {
+          "name": "runtime",
+          "scope": "read"
+        }
+      ],
+      "context_required": [],
+      "error_model": {
+        "type": "object"
+      },
+      "examples": [
+        {
+          "inputs": {
+            "payload": {
+              "example": true
+            }
+          },
+          "expected_outputs": {
+            "result": {
+              "ok": true
+            }
+          }
+        }
+      ],
+      "changelog": [
+        {
+          "version": "1.0.0",
+          "notes": "Initial"
+        }
+      ]
+    },
+    {
+      "id": "mlops.mlops.train_job",
+      "display_name": "Mlops Train_Job",
+      "intent": "Execute Mlops Train_Job deterministically.",
+      "owner": "dept@company.com",
+      "version": "1.0.0",
+      "status": "stable",
+      "tags": [
+        "mlops",
+        "mlops"
+      ],
+      "inputs": {
+        "type": "object",
+        "properties": {
+          "payload": {
+            "type": "object"
+          }
+        }
+      },
+      "outputs": {
+        "type": "object",
+        "required": [
+          "result",
+          "trace_id"
+        ],
+        "properties": {
+          "result": {
+            "type": "object"
+          },
+          "trace_id": {
+            "type": "string"
+          }
+        }
+      },
+      "preconditions": [
+        "payload not null"
+      ],
+      "postconditions": [
+        "deterministic structure"
+      ],
+      "tools_required": [
+        {
+          "name": "runtime",
+          "scope": "read"
+        }
+      ],
+      "context_required": [],
+      "error_model": {
+        "type": "object"
+      },
+      "examples": [
+        {
+          "inputs": {
+            "payload": {
+              "example": true
+            }
+          },
+          "expected_outputs": {
+            "result": {
+              "ok": true
+            }
+          }
+        }
+      ],
+      "changelog": [
+        {
+          "version": "1.0.0",
+          "notes": "Initial"
+        }
+      ]
+    },
+    {
+      "id": "mlops.mlops.eval_benchmark",
+      "display_name": "Mlops Eval_Benchmark",
+      "intent": "Execute Mlops Eval_Benchmark deterministically.",
+      "owner": "dept@company.com",
+      "version": "1.0.0",
+      "status": "stable",
+      "tags": [
+        "mlops",
+        "mlops"
+      ],
+      "inputs": {
+        "type": "object",
+        "properties": {
+          "payload": {
+            "type": "object"
+          }
+        }
+      },
+      "outputs": {
+        "type": "object",
+        "required": [
+          "result",
+          "trace_id"
+        ],
+        "properties": {
+          "result": {
+            "type": "object"
+          },
+          "trace_id": {
+            "type": "string"
+          }
+        }
+      },
+      "preconditions": [
+        "payload not null"
+      ],
+      "postconditions": [
+        "deterministic structure"
+      ],
+      "tools_required": [
+        {
+          "name": "runtime",
+          "scope": "read"
+        }
+      ],
+      "context_required": [],
+      "error_model": {
+        "type": "object"
+      },
+      "examples": [
+        {
+          "inputs": {
+            "payload": {
+              "example": true
+            }
+          },
+          "expected_outputs": {
+            "result": {
+              "ok": true
+            }
+          }
+        }
+      ],
+      "changelog": [
+        {
+          "version": "1.0.0",
+          "notes": "Initial"
+        }
+      ]
+    },
+    {
+      "id": "mlops.mlops.deploy_promote",
+      "display_name": "Mlops Deploy_Promote",
+      "intent": "Execute Mlops Deploy_Promote deterministically.",
+      "owner": "dept@company.com",
+      "version": "1.0.0",
+      "status": "stable",
+      "tags": [
+        "mlops",
+        "mlops"
+      ],
+      "inputs": {
+        "type": "object",
+        "properties": {
+          "payload": {
+            "type": "object"
+          }
+        }
+      },
+      "outputs": {
+        "type": "object",
+        "required": [
+          "result",
+          "trace_id"
+        ],
+        "properties": {
+          "result": {
+            "type": "object"
+          },
+          "trace_id": {
+            "type": "string"
+          }
+        }
+      },
+      "preconditions": [
+        "payload not null"
+      ],
+      "postconditions": [
+        "deterministic structure"
+      ],
+      "tools_required": [
+        {
+          "name": "runtime",
+          "scope": "read"
+        }
+      ],
+      "context_required": [],
+      "error_model": {
+        "type": "object"
+      },
+      "examples": [
+        {
+          "inputs": {
+            "payload": {
+              "example": true
+            }
+          },
+          "expected_outputs": {
+            "result": {
+              "ok": true
+            }
+          }
+        }
+      ],
+      "changelog": [
+        {
+          "version": "1.0.0",
+          "notes": "Initial"
+        }
+      ]
+    }
+  ]
+}

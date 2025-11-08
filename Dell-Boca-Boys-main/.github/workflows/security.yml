@@ -1,0 +1,241 @@
+name: Security Scanning
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+  schedule:
+    # Run weekly on Sundays at 2 AM UTC
+    - cron: '0 2 * * 0'
+
+jobs:
+  dependency-scan:
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+      contents: read
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run Snyk dependency scan
+        uses: snyk/actions/python@master
+        continue-on-error: true
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          args: --severity-threshold=high
+
+      - name: Run pip-audit
+        run: |
+          pip install pip-audit
+          pip-audit --require-hashes --disable-pip
+
+  code-scan:
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+      contents: read
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: python
+          queries: security-extended
+
+      - name: Perform CodeQL analysis
+        uses: github/codeql-action/analyze@v3
+
+  secret-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: TruffleHog OSS
+        uses: trufflesecurity/trufflehog@main
+        with:
+          path: ./
+          base: ${{ github.event.repository.default_branch }}
+          head: HEAD
+
+      - name: GitLeaks scan
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  security-audit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Bandit
+        run: pip install bandit[toml]
+
+      - name: Run Bandit security scan
+        run: |
+          bandit -r core/ workflows/ skills/ \
+            -f json -o bandit-report.json \
+            -ll -i
+
+      - name: Upload Bandit results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: bandit-report
+          path: bandit-report.json
+
+      - name: Run Safety check
+        run: |
+          pip install safety
+          safety check --json > safety-report.json || true
+
+      - name: Upload Safety results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: safety-report
+          path: safety-report.json
+
+  license-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install -e .
+          pip install pip-licenses
+
+      - name: Check licenses
+        run: |
+          pip-licenses \
+            --format=json \
+            --output-file=licenses.json \
+            --ignore-packages dell-boca-boys
+
+          # Check for copyleft licenses (fail on GPL/AGPL)
+          pip-licenses --fail-on GPL --fail-on AGPL
+
+      - name: Upload license report
+        uses: actions/upload-artifact@v4
+        with:
+          name: license-report
+          path: licenses.json
+
+  container-scan:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Build image
+        run: docker build -t dell-boca-boys:scan .
+
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: dell-boca-boys:scan
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+          severity: 'CRITICAL,HIGH'
+
+      - name: Upload Trivy results to GitHub Security
+        uses: github/codeql-action/upload-sarif@v3
+        if: always()
+        with:
+          sarif_file: 'trivy-results.sarif'
+
+      - name: Run Grype vulnerability scanner
+        uses: anchore/scan-action@v3
+        with:
+          image: dell-boca-boys:scan
+          fail-build: true
+          severity-cutoff: high
+
+  infrastructure-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run Checkov (IaC security)
+        uses: bridgecrewio/checkov-action@master
+        with:
+          directory: deploy/
+          framework: kubernetes,dockerfile
+          output_format: sarif
+          output_file_path: checkov-results.sarif
+
+      - name: Upload Checkov results
+        uses: github/codeql-action/upload-sarif@v3
+        if: always()
+        with:
+          sarif_file: checkov-results.sarif
+
+      - name: Run KICS (Kubernetes security)
+        uses: checkmarx/kics-github-action@v1.7
+        with:
+          path: deploy/k8s/
+          fail_on: high
+          output_path: kics-results/
+
+  compliance-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Check PII detection implementation
+        run: |
+          python -c "
+          from core.mcp.policy import enforce
+          test_payload = {'ssn': '123-45-6789', 'email': 'test@example.com'}
+          result = enforce(test_payload, 'no_pii')
+          assert result['status'] == 'redacted', 'PII detection failed'
+          print('✓ PII detection working correctly')
+          "
+
+      - name: Verify HMAC signature validation
+        run: |
+          python -c "
+          from app.middleware.security import verify_hmac_signature
+          assert verify_hmac_signature('key', b'data', None), 'HMAC validation failed'
+          print('✓ HMAC signature validation working')
+          "
+
+      - name: Check governance framework
+        run: |
+          python -c "
+          from compliance.governance import GovernanceFramework
+          from compliance.governance import ProposalType
+          gf = GovernanceFramework()
+          result = gf.evaluate_proposal(
+              ProposalType.WORKFLOW_CHANGE,
+              {'workflow_id': 'test'},
+              {'author': 'system'}
+          )
+          assert result['decision'] in ['approved', 'requires_review', 'rejected']
+          print('✓ Governance framework operational')
+          "

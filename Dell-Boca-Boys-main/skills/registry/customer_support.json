@@ -1,0 +1,296 @@
+{
+  "meta": {
+    "dept": "customer.support",
+    "version": "1.0.0"
+  },
+  "skills": [
+    {
+      "id": "customer.support.cx.ticket_triage",
+      "display_name": "Cx Ticket_Triage",
+      "intent": "Execute Cx Ticket_Triage deterministically.",
+      "owner": "dept@company.com",
+      "version": "1.0.0",
+      "status": "stable",
+      "tags": [
+        "customer",
+        "support",
+        "cx"
+      ],
+      "inputs": {
+        "type": "object",
+        "properties": {
+          "payload": {
+            "type": "object"
+          }
+        }
+      },
+      "outputs": {
+        "type": "object",
+        "required": [
+          "result",
+          "trace_id"
+        ],
+        "properties": {
+          "result": {
+            "type": "object"
+          },
+          "trace_id": {
+            "type": "string"
+          }
+        }
+      },
+      "preconditions": [
+        "payload not null"
+      ],
+      "postconditions": [
+        "deterministic structure"
+      ],
+      "tools_required": [
+        {
+          "name": "runtime",
+          "scope": "read"
+        }
+      ],
+      "context_required": [],
+      "error_model": {
+        "type": "object"
+      },
+      "examples": [
+        {
+          "inputs": {
+            "payload": {
+              "example": true
+            }
+          },
+          "expected_outputs": {
+            "result": {
+              "ok": true
+            }
+          }
+        }
+      ],
+      "changelog": [
+        {
+          "version": "1.0.0",
+          "notes": "Initial"
+        }
+      ]
+    },
+    {
+      "id": "customer.support.cx.auto_reply_kb",
+      "display_name": "Cx Auto_Reply_Kb",
+      "intent": "Execute Cx Auto_Reply_Kb deterministically.",
+      "owner": "dept@company.com",
+      "version": "1.0.0",
+      "status": "stable",
+      "tags": [
+        "customer",
+        "support",
+        "cx"
+      ],
+      "inputs": {
+        "type": "object",
+        "properties": {
+          "payload": {
+            "type": "object"
+          }
+        }
+      },
+      "outputs": {
+        "type": "object",
+        "required": [
+          "result",
+          "trace_id"
+        ],
+        "properties": {
+          "result": {
+            "type": "object"
+          },
+          "trace_id": {
+            "type": "string"
+          }
+        }
+      },
+      "preconditions": [
+        "payload not null"
+      ],
+      "postconditions": [
+        "deterministic structure"
+      ],
+      "tools_required": [
+        {
+          "name": "runtime",
+          "scope": "read"
+        }
+      ],
+      "context_required": [],
+      "error_model": {
+        "type": "object"
+      },
+      "examples": [
+        {
+          "inputs": {
+            "payload": {
+              "example": true
+            }
+          },
+          "expected_outputs": {
+            "result": {
+              "ok": true
+            }
+          }
+        }
+      ],
+      "changelog": [
+        {
+          "version": "1.0.0",
+          "notes": "Initial"
+        }
+      ]
+    },
+    {
+      "id": "customer.support.cx.escalate_route",
+      "display_name": "Cx Escalate_Route",
+      "intent": "Execute Cx Escalate_Route deterministically.",
+      "owner": "dept@company.com",
+      "version": "1.0.0",
+      "status": "stable",
+      "tags": [
+        "customer",
+        "support",
+        "cx"
+      ],
+      "inputs": {
+        "type": "object",
+        "properties": {
+          "payload": {
+            "type": "object"
+          }
+        }
+      },
+      "outputs": {
+        "type": "object",
+        "required": [
+          "result",
+          "trace_id"
+        ],
+        "properties": {
+          "result": {
+            "type": "object"
+          },
+          "trace_id": {
+            "type": "string"
+          }
+        }
+      },
+      "preconditions": [
+        "payload not null"
+      ],
+      "postconditions": [
+        "deterministic structure"
+      ],
+      "tools_required": [
+        {
+          "name": "runtime",
+          "scope": "read"
+        }
+      ],
+      "context_required": [],
+      "error_model": {
+        "type": "object"
+      },
+      "examples": [
+        {
+          "inputs": {
+            "payload": {
+              "example": true
+            }
+          },
+          "expected_outputs": {
+            "result": {
+              "ok": true
+            }
+          }
+        }
+      ],
+      "changelog": [
+        {
+          "version": "1.0.0",
+          "notes": "Initial"
+        }
+      ]
+    },
+    {
+      "id": "customer.support.cx.csat_analysis",
+      "display_name": "Cx Csat_Analysis",
+      "intent": "Execute Cx Csat_Analysis deterministically.",
+      "owner": "dept@company.com",
+      "version": "1.0.0",
+      "status": "stable",
+      "tags": [
+        "customer",
+        "support",
+        "cx"
+      ],
+      "inputs": {
+        "type": "object",
+        "properties": {
+          "payload": {
+            "type": "object"
+          }
+        }
+      },
+      "outputs": {
+        "type": "object",
+        "required": [
+          "result",
+          "trace_id"
+        ],
+        "properties": {
+          "result": {
+            "type": "object"
+          },
+          "trace_id": {
+            "type": "string"
+          }
+        }
+      },
+      "preconditions": [
+        "payload not null"
+      ],
+      "postconditions": [
+        "deterministic structure"
+      ],
+      "tools_required": [
+        {
+          "name": "runtime",
+          "scope": "read"
+        }
+      ],
+      "context_required": [],
+      "error_model": {
+        "type": "object"
+      },
+      "examples": [
+        {
+          "inputs": {
+            "payload": {
+              "example": true
+            }
+          },
+          "expected_outputs": {
+            "result": {
+              "ok": true
+            }
+          }
+        }
+      ],
+      "changelog": [
+        {
+          "version": "1.0.0",
+          "notes": "Initial"
+        }
+      ]
+    }
+  ]
+}

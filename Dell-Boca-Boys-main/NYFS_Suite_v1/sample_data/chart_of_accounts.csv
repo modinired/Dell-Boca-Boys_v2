@@ -1,0 +1,11 @@
+AccountID,Name,Type,ParentID,IsActive
+Cash,Cash,Asset,,True
+AR,Accounts Receivable,Asset,,True
+Inventory,Inventory,Asset,,True
+AP,Accounts Payable,Liability,,True
+Equity,Owner's Equity,Equity,,True
+Sales,Sales Revenue,Revenue,,True
+COGS,Cost of Goods Sold,Expense,,True
+Rent,Office Rent,Expense,,True
+Utilities,Utilities,Expense,,True
+Payroll,Payroll Expense,Expense,,True

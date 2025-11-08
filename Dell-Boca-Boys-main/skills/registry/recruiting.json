@@ -1,0 +1,292 @@
+{
+  "meta": {
+    "dept": "recruiting",
+    "version": "1.0.0"
+  },
+  "skills": [
+    {
+      "id": "recruiting.talent.parse_resume",
+      "display_name": "Talent Parse_Resume",
+      "intent": "Execute Talent Parse_Resume deterministically.",
+      "owner": "dept@company.com",
+      "version": "1.0.0",
+      "status": "stable",
+      "tags": [
+        "recruiting",
+        "talent"
+      ],
+      "inputs": {
+        "type": "object",
+        "properties": {
+          "payload": {
+            "type": "object"
+          }
+        }
+      },
+      "outputs": {
+        "type": "object",
+        "required": [
+          "result",
+          "trace_id"
+        ],
+        "properties": {
+          "result": {
+            "type": "object"
+          },
+          "trace_id": {
+            "type": "string"
+          }
+        }
+      },
+      "preconditions": [
+        "payload not null"
+      ],
+      "postconditions": [
+        "deterministic structure"
+      ],
+      "tools_required": [
+        {
+          "name": "runtime",
+          "scope": "read"
+        }
+      ],
+      "context_required": [],
+      "error_model": {
+        "type": "object"
+      },
+      "examples": [
+        {
+          "inputs": {
+            "payload": {
+              "example": true
+            }
+          },
+          "expected_outputs": {
+            "result": {
+              "ok": true
+            }
+          }
+        }
+      ],
+      "changelog": [
+        {
+          "version": "1.0.0",
+          "notes": "Initial"
+        }
+      ]
+    },
+    {
+      "id": "recruiting.talent.rank_candidates",
+      "display_name": "Talent Rank_Candidates",
+      "intent": "Execute Talent Rank_Candidates deterministically.",
+      "owner": "dept@company.com",
+      "version": "1.0.0",
+      "status": "stable",
+      "tags": [
+        "recruiting",
+        "talent"
+      ],
+      "inputs": {
+        "type": "object",
+        "properties": {
+          "payload": {
+            "type": "object"
+          }
+        }
+      },
+      "outputs": {
+        "type": "object",
+        "required": [
+          "result",
+          "trace_id"
+        ],
+        "properties": {
+          "result": {
+            "type": "object"
+          },
+          "trace_id": {
+            "type": "string"
+          }
+        }
+      },
+      "preconditions": [
+        "payload not null"
+      ],
+      "postconditions": [
+        "deterministic structure"
+      ],
+      "tools_required": [
+        {
+          "name": "runtime",
+          "scope": "read"
+        }
+      ],
+      "context_required": [],
+      "error_model": {
+        "type": "object"
+      },
+      "examples": [
+        {
+          "inputs": {
+            "payload": {
+              "example": true
+            }
+          },
+          "expected_outputs": {
+            "result": {
+              "ok": true
+            }
+          }
+        }
+      ],
+      "changelog": [
+        {
+          "version": "1.0.0",
+          "notes": "Initial"
+        }
+      ]
+    },
+    {
+      "id": "recruiting.talent.schedule_interviews",
+      "display_name": "Talent Schedule_Interviews",
+      "intent": "Execute Talent Schedule_Interviews deterministically.",
+      "owner": "dept@company.com",
+      "version": "1.0.0",
+      "status": "stable",
+      "tags": [
+        "recruiting",
+        "talent"
+      ],
+      "inputs": {
+        "type": "object",
+        "properties": {
+          "payload": {
+            "type": "object"
+          }
+        }
+      },
+      "outputs": {
+        "type": "object",
+        "required": [
+          "result",
+          "trace_id"
+        ],
+        "properties": {
+          "result": {
+            "type": "object"
+          },
+          "trace_id": {
+            "type": "string"
+          }
+        }
+      },
+      "preconditions": [
+        "payload not null"
+      ],
+      "postconditions": [
+        "deterministic structure"
+      ],
+      "tools_required": [
+        {
+          "name": "runtime",
+          "scope": "read"
+        }
+      ],
+      "context_required": [],
+      "error_model": {
+        "type": "object"
+      },
+      "examples": [
+        {
+          "inputs": {
+            "payload": {
+              "example": true
+            }
+          },
+          "expected_outputs": {
+            "result": {
+              "ok": true
+            }
+          }
+        }
+      ],
+      "changelog": [
+        {
+          "version": "1.0.0",
+          "notes": "Initial"
+        }
+      ]
+    },
+    {
+      "id": "recruiting.talent.background_check",
+      "display_name": "Talent Background_Check",
+      "intent": "Execute Talent Background_Check deterministically.",
+      "owner": "dept@company.com",
+      "version": "1.0.0",
+      "status": "stable",
+      "tags": [
+        "recruiting",
+        "talent"
+      ],
+      "inputs": {
+        "type": "object",
+        "properties": {
+          "payload": {
+            "type": "object"
+          }
+        }
+      },
+      "outputs": {
+        "type": "object",
+        "required": [
+          "result",
+          "trace_id"
+        ],
+        "properties": {
+          "result": {
+            "type": "object"
+          },
+          "trace_id": {
+            "type": "string"
+          }
+        }
+      },
+      "preconditions": [
+        "payload not null"
+      ],
+      "postconditions": [
+        "deterministic structure"
+      ],
+      "tools_required": [
+        {
+          "name": "runtime",
+          "scope": "read"
+        }
+      ],
+      "context_required": [],
+      "error_model": {
+        "type": "object"
+      },
+      "examples": [
+        {
+          "inputs": {
+            "payload": {
+              "example": true
+            }
+          },
+          "expected_outputs": {
+            "result": {
+              "ok": true
+            }
+          }
+        }
+      ],
+      "changelog": [
+        {
+          "version": "1.0.0",
+          "notes": "Initial"
+        }
+      ]
+    }
+  ]
+}

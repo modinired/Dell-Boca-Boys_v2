@@ -1,0 +1,363 @@
+{
+  "meta": {
+    "dept": "procurement",
+    "version": "1.0.0"
+  },
+  "skills": [
+    {
+      "id": "procurement.reqintake.normalize",
+      "display_name": "Reqintake Normalize",
+      "intent": "Execute Reqintake Normalize deterministically.",
+      "owner": "dept@company.com",
+      "version": "1.0.0",
+      "status": "stable",
+      "tags": [
+        "procurement",
+        "reqintake"
+      ],
+      "inputs": {
+        "type": "object",
+        "properties": {
+          "payload": {
+            "type": "object"
+          }
+        }
+      },
+      "outputs": {
+        "type": "object",
+        "required": [
+          "result",
+          "trace_id"
+        ],
+        "properties": {
+          "result": {
+            "type": "object"
+          },
+          "trace_id": {
+            "type": "string"
+          }
+        }
+      },
+      "preconditions": [
+        "payload not null"
+      ],
+      "postconditions": [
+        "deterministic structure"
+      ],
+      "tools_required": [
+        {
+          "name": "runtime",
+          "scope": "read"
+        }
+      ],
+      "context_required": [],
+      "error_model": {
+        "type": "object"
+      },
+      "examples": [
+        {
+          "inputs": {
+            "payload": {
+              "example": true
+            }
+          },
+          "expected_outputs": {
+            "result": {
+              "ok": true
+            }
+          }
+        }
+      ],
+      "changelog": [
+        {
+          "version": "1.0.0",
+          "notes": "Initial"
+        }
+      ]
+    },
+    {
+      "id": "procurement.sourcing.rfq_issue",
+      "display_name": "Sourcing Rfq_Issue",
+      "intent": "Execute Sourcing Rfq_Issue deterministically.",
+      "owner": "dept@company.com",
+      "version": "1.0.0",
+      "status": "stable",
+      "tags": [
+        "procurement",
+        "sourcing"
+      ],
+      "inputs": {
+        "type": "object",
+        "properties": {
+          "payload": {
+            "type": "object"
+          }
+        }
+      },
+      "outputs": {
+        "type": "object",
+        "required": [
+          "result",
+          "trace_id"
+        ],
+        "properties": {
+          "result": {
+            "type": "object"
+          },
+          "trace_id": {
+            "type": "string"
+          }
+        }
+      },
+      "preconditions": [
+        "payload not null"
+      ],
+      "postconditions": [
+        "deterministic structure"
+      ],
+      "tools_required": [
+        {
+          "name": "runtime",
+          "scope": "read"
+        }
+      ],
+      "context_required": [],
+      "error_model": {
+        "type": "object"
+      },
+      "examples": [
+        {
+          "inputs": {
+            "payload": {
+              "example": true
+            }
+          },
+          "expected_outputs": {
+            "result": {
+              "ok": true
+            }
+          }
+        }
+      ],
+      "changelog": [
+        {
+          "version": "1.0.0",
+          "notes": "Initial"
+        }
+      ]
+    },
+    {
+      "id": "procurement.contract.clm_extract",
+      "display_name": "Contract Clm_Extract",
+      "intent": "Execute Contract Clm_Extract deterministically.",
+      "owner": "dept@company.com",
+      "version": "1.0.0",
+      "status": "stable",
+      "tags": [
+        "procurement",
+        "contract"
+      ],
+      "inputs": {
+        "type": "object",
+        "properties": {
+          "payload": {
+            "type": "object"
+          }
+        }
+      },
+      "outputs": {
+        "type": "object",
+        "required": [
+          "result",
+          "trace_id"
+        ],
+        "properties": {
+          "result": {
+            "type": "object"
+          },
+          "trace_id": {
+            "type": "string"
+          }
+        }
+      },
+      "preconditions": [
+        "payload not null"
+      ],
+      "postconditions": [
+        "deterministic structure"
+      ],
+      "tools_required": [
+        {
+          "name": "runtime",
+          "scope": "read"
+        }
+      ],
+      "context_required": [],
+      "error_model": {
+        "type": "object"
+      },
+      "examples": [
+        {
+          "inputs": {
+            "payload": {
+              "example": true
+            }
+          },
+          "expected_outputs": {
+            "result": {
+              "ok": true
+            }
+          }
+        }
+      ],
+      "changelog": [
+        {
+          "version": "1.0.0",
+          "notes": "Initial"
+        }
+      ]
+    },
+    {
+      "id": "procurement.catalog.enable",
+      "display_name": "Catalog Enable",
+      "intent": "Execute Catalog Enable deterministically.",
+      "owner": "dept@company.com",
+      "version": "1.0.0",
+      "status": "stable",
+      "tags": [
+        "procurement",
+        "catalog"
+      ],
+      "inputs": {
+        "type": "object",
+        "properties": {
+          "payload": {
+            "type": "object"
+          }
+        }
+      },
+      "outputs": {
+        "type": "object",
+        "required": [
+          "result",
+          "trace_id"
+        ],
+        "properties": {
+          "result": {
+            "type": "object"
+          },
+          "trace_id": {
+            "type": "string"
+          }
+        }
+      },
+      "preconditions": [
+        "payload not null"
+      ],
+      "postconditions": [
+        "deterministic structure"
+      ],
+      "tools_required": [
+        {
+          "name": "runtime",
+          "scope": "read"
+        }
+      ],
+      "context_required": [],
+      "error_model": {
+        "type": "object"
+      },
+      "examples": [
+        {
+          "inputs": {
+            "payload": {
+              "example": true
+            }
+          },
+          "expected_outputs": {
+            "result": {
+              "ok": true
+            }
+          }
+        }
+      ],
+      "changelog": [
+        {
+          "version": "1.0.0",
+          "notes": "Initial"
+        }
+      ]
+    },
+    {
+      "id": "procurement.po.auto_create",
+      "display_name": "Po Auto_Create",
+      "intent": "Execute Po Auto_Create deterministically.",
+      "owner": "dept@company.com",
+      "version": "1.0.0",
+      "status": "stable",
+      "tags": [
+        "procurement",
+        "po"
+      ],
+      "inputs": {
+        "type": "object",
+        "properties": {
+          "payload": {
+            "type": "object"
+          }
+        }
+      },
+      "outputs": {
+        "type": "object",
+        "required": [
+          "result",
+          "trace_id"
+        ],
+        "properties": {
+          "result": {
+            "type": "object"
+          },
+          "trace_id": {
+            "type": "string"
+          }
+        }
+      },
+      "preconditions": [
+        "payload not null"
+      ],
+      "postconditions": [
+        "deterministic structure"
+      ],
+      "tools_required": [
+        {
+          "name": "runtime",
+          "scope": "read"
+        }
+      ],
+      "context_required": [],
+      "error_model": {
+        "type": "object"
+      },
+      "examples": [
+        {
+          "inputs": {
+            "payload": {
+              "example": true
+            }
+          },
+          "expected_outputs": {
+            "result": {
+              "ok": true
+            }
+          }
+        }
+      ],
+      "changelog": [
+        {
+          "version": "1.0.0",
+          "notes": "Initial"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dell Boca Vista Boys - AI Dashboard</title>
+
+    <!-- Bootstrap 4 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/static/css/dashboard.css">
+</head>
+<body>
+
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h3><i class="fas fa-hat-cowboy"></i> Dell Boca Vista Boys</h3>
+            <p class="text-muted small">A Terry Dellmonaco Company</p>
+        </div>
+
+        <ul class="nav flex-column sidebar-nav">
+            <li class="nav-item">
+                <a class="nav-link active" href="#" data-page="dashboard">
+                    <i class="fas fa-home"></i> Dashboard
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#" data-page="chat">
+                    <i class="fas fa-comments"></i> Chat
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#" data-page="agents">
+                    <i class="fas fa-users"></i> Agent Hive
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#" data-page="workflows">
+                    <i class="fas fa-project-diagram"></i> Workflows
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#" data-page="learning">
+                    <i class="fas fa-brain"></i> Learning
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#" data-page="settings">
+                    <i class="fas fa-cog"></i> Settings
+                </a>
+            </li>
+        </ul>
+
+        <div class="sidebar-footer">
+            <div class="system-status">
+                <div class="status-item">
+                    <i class="fas fa-circle text-success"></i> Ollama
+                </div>
+                <div class="status-item">
+                    <i class="fas fa-circle text-success"></i> Gemini
+                </div>
+                <div class="status-item">
+                    <i class="fas fa-circle text-success"></i> Database
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content" id="mainContent">
+
+        <!-- Top Navbar -->
+        <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom">
+            <button class="btn btn-link" id="sidebarToggle">
+                <i class="fas fa-bars"></i>
+            </button>
+
+            <span class="navbar-brand mb-0 h1">
+                <span id="pageTitle">Dashboard</span>
+            </span>
+
+            <div class="ml-auto d-flex align-items-center">
+                <div class="mr-3">
+                    <span class="badge badge-primary">Session: <span id="sessionId">Loading...</span></span>
+                </div>
+                <div class="dropdown">
+                    <button class="btn btn-link dropdown-toggle" type="button" id="userDropdown" data-toggle="dropdown">
+                        <i class="fas fa-user-circle fa-2x"></i>
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-right">
+                        <a class="dropdown-item" href="#"><i class="fas fa-user"></i> Profile</a>
+                        <a class="dropdown-item" href="#"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Dashboard Page -->
+        <div class="page-content active" id="page-dashboard">
+            <div class="container-fluid py-4">
+
+                <!-- Metric Cards -->
+                <div class="row mb-4">
+                    <div class="col-md-3 mb-3">
+                        <div class="metric-card">
+                            <div class="metric-icon bg-gradient-purple">
+                                <i class="fas fa-comments"></i>
+                            </div>
+                            <div class="metric-info">
+                                <h6>Activity Breakdown</h6>
+                                <h3 id="metricTotalChats">0</h3>
+                                <small class="text-muted">Behind the scenes</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="metric-card">
+                            <div class="metric-icon bg-gradient-blue">
+                                <i class="fas fa-project-diagram"></i>
+                            </div>
+                            <div class="metric-info">
+                                <h6>Workflows</h6>
+                                <h3 id="metricWorkflows">0</h3>
+                                <small class="text-muted">Generated</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="metric-card">
+                            <div class="metric-icon bg-gradient-green">
+                                <i class="fas fa-calendar-day"></i>
+                            </div>
+                            <div class="metric-info">
+                                <h6>Today's Activity</h6>
+                                <h3 id="metricToday">0</h3>
+                                <small class="text-muted">Interactions</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="metric-card">
+                            <div class="metric-icon bg-gradient-orange">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <div class="metric-info">
+                                <h6>Avg Response</h6>
+                                <h3 id="metricAvgTime">0ms</h3>
+                                <small class="text-muted">Processing time</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts Row -->
+                <div class="row mb-4">
+                    <div class="col-md-8">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5>Performance Overview</h5>
+                            </div>
+                            <div class="card-body">
+                                <canvas id="performanceChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5>Agent Activity</h5>
+                            </div>
+                            <div class="card-body">
+                                <canvas id="agentActivityChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Agent Hive Preview -->
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h5>The Crew - Live Status</h5>
+                                <span class="badge badge-success">All Active</span>
+                            </div>
+                            <div class="card-body">
+                                <div id="agentHive" class="agent-hive-grid">
+                                    <!-- Agents populated by JavaScript -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Chat Page -->
+        <div class="page-content" id="page-chat">
+            <div class="container-fluid py-4">
+                <div class="row">
+                    <div class="col-md-9">
+                        <div class="card chat-card">
+                            <div class="card-header">
+                                <h5><i class="fas fa-comments"></i> Chat with The Crew</h5>
+                            </div>
+                            <div class="card-body p-0">
+                                <div id="chatMessages" class="chat-messages">
+                                    <!-- Messages populated by JavaScript -->
+                                </div>
+                            </div>
+                            <div class="card-footer">
+                                <div class="chat-input-container">
+                                    <textarea class="form-control chat-textarea" id="chatInput" rows="1"
+                                           placeholder="Ask the Dell Boca Vista Boys anything... (Shift+Enter for new line)"></textarea>
+                                    <button class="btn btn-primary chat-send-btn" id="sendButton">
+                                        <i class="fas fa-paper-plane"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card">
+                            <div class="card-header">
+                                <h6>Active Agents</h6>
+                            </div>
+                            <div class="card-body p-2">
+                                <div id="chatAgentStatus">
+                                    <!-- Mini agent status -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Agent Hive Page -->
+        <div class="page-content" id="page-agents">
+            <div class="container-fluid py-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>The Dell Boca Vista Boys - Agent Hive</h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="agentHiveFull" class="agent-hive-grid-large">
+                            <!-- Full agent hive -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Workflows Page -->
+        <div class="page-content" id="page-workflows">
+            <div class="container-fluid py-4">
+
+                <!-- Stage 1: Request Workflow -->
+                <div class="card" id="workflowRequestCard">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5><i class="fas fa-plus-circle"></i> Request New Workflow</h5>
+                        <span class="badge badge-primary">Stage 1: Request</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-group">
+                            <label><strong>Describe your workflow goal:</strong></label>
+                            <textarea class="form-control" id="workflowGoal" rows="4"
+                                      placeholder="e.g., Find job training videos on YouTube about Python programming, extract video details, and convert them to JSON format for automation"></textarea>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
+                                <label><strong>Recurring Schedule:</strong></label>
+                                <select class="form-control" id="workflowRecurring">
+                                    <option value="once">One-time only</option>
+                                    <option value="hourly">Every Hour</option>
+                                    <option value="daily">Daily</option>
+                                    <option value="weekly">Weekly</option>
+                                    <option value="custom">Custom Schedule</option>
+                                </select>
+                            </div>
+                            <div class="form-group col-md-6" id="customScheduleDiv" style="display: none;">
+                                <label><strong>Custom Cron Expression:</strong></label>
+                                <input type="text" class="form-control" id="customCron" placeholder="0 */2 * * *">
+                            </div>
+                        </div>
+
+                        <button class="btn btn-primary btn-lg" id="proposeWorkflow">
+                            <i class="fas fa-lightbulb"></i> Propose Workflow
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Stage 2: Review Proposal -->
+                <div class="card mt-4" id="workflowProposalCard" style="display: none;">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5><i class="fas fa-clipboard-check"></i> Workflow Proposal</h5>
+                        <span class="badge badge-warning">Stage 2: Review & Approve</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle"></i> Review the proposed workflow below. Once approved, the Dell Boca Vista Boys will build it for you.
+                        </div>
+
+                        <!-- Workflow Summary -->
+                        <div class="workflow-summary mb-4">
+                            <h6 class="text-navy"><i class="fas fa-file-alt"></i> Summary</h6>
+                            <div id="proposalSummary" class="p-3 bg-light rounded">
+                                <!-- Populated by JavaScript -->
+                            </div>
+                        </div>
+
+                        <!-- Workflow Steps Visualization -->
+                        <div class="workflow-steps mb-4">
+                            <h6 class="text-navy"><i class="fas fa-sitemap"></i> Workflow Steps</h6>
+                            <div id="proposalSteps" class="workflow-steps-container">
+                                <!-- Populated by JavaScript -->
+                            </div>
+                        </div>
+
+                        <!-- Required Credentials -->
+                        <div class="workflow-credentials mb-4">
+                            <h6 class="text-navy"><i class="fas fa-key"></i> Required Credentials</h6>
+                            <div id="proposalCredentials">
+                                <!-- Populated by JavaScript -->
+                            </div>
+                        </div>
+
+                        <!-- Estimated Resources -->
+                        <div class="workflow-resources mb-4">
+                            <h6 class="text-navy"><i class="fas fa-chart-bar"></i> Estimated Resources</h6>
+                            <div id="proposalResources" class="row">
+                                <!-- Populated by JavaScript -->
+                            </div>
+                        </div>
+
+                        <!-- Approval Actions -->
+                        <div class="approval-actions">
+                            <button class="btn btn-success btn-lg mr-3" id="approveWorkflow">
+                                <i class="fas fa-check-circle"></i> Approve & Build
+                            </button>
+                            <button class="btn btn-outline-danger" id="rejectWorkflow">
+                                <i class="fas fa-times-circle"></i> Reject
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Stage 3: Building -->
+                <div class="card mt-4" id="workflowBuildingCard" style="display: none;">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5><i class="fas fa-cogs"></i> Building Workflow</h5>
+                        <span class="badge badge-success">Stage 3: Building</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="building-progress">
+                            <div class="text-center mb-4">
+                                <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
+                                    <span class="sr-only">Building...</span>
+                                </div>
+                                <p class="mt-3 text-muted">The Dell Boca Vista Boys are building your workflow...</p>
+                            </div>
+
+                            <!-- Build Progress Steps -->
+                            <div id="buildProgress" class="build-progress-steps">
+                                <!-- Populated by JavaScript -->
+                            </div>
+
+                            <!-- Live Agent Activity -->
+                            <div class="mt-4">
+                                <h6><i class="fas fa-users"></i> Agent Activity</h6>
+                                <div id="buildAgentActivity" class="agent-build-activity">
+                                    <!-- Populated by JavaScript -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Completed Workflows -->
+                <div class="card mt-4" id="workflowCompletedCard">
+                    <div class="card-header">
+                        <h5><i class="fas fa-check-double"></i> Completed Workflows</h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="completedWorkflowsList">
+                            <!-- Populated by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Learning Page -->
+        <div class="page-content" id="page-learning">
+            <div class="container-fluid py-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Learning Dashboard</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="alert alert-info">
+                            <i class="fas fa-brain"></i> The crew learns from every interaction and gets smarter over time.
+                        </div>
+                        <div id="learningStats">
+                            <!-- Learning statistics -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Settings Page -->
+        <div class="page-content" id="page-settings">
+            <div class="container-fluid py-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Settings</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-group">
+                            <label>Mode</label>
+                            <select class="form-control" id="modeSelect">
+                                <option value="local">Local (Current Agents)</option>
+                                <option value="microservices">Microservices (CESAR)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Theme</label>
+                            <select class="form-control">
+                                <option>Dell Boca Vista (Purple/Navy)</option>
+                                <option>Dark Mode</option>
+                                <option>Light Mode</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- jQuery and Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Custom JavaScript -->
+    <script src="/static/js/dashboard.js"></script>
+    <script src="/static/js/agents.js"></script>
+    <script src="/static/js/charts.js"></script>
+    <script src="/static/js/voice.js"></script>
+    <script src="/static/js/recording.js"></script>
+    <script src="/static/js/learning.js"></script>
+
+</body>
+</html>

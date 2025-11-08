@@ -1,0 +1,303 @@
+groups:
+  - name: orchestrator_alerts
+    interval: 30s
+    rules:
+      - alert: OrchestratorDown
+        expr: up{job="orchestrator"} == 0
+        for: 2m
+        labels:
+          severity: critical
+          component: orchestrator
+        annotations:
+          summary: "Orchestrator is down"
+          description: "The Dell-Boca-Boys orchestrator has been down for more than 2 minutes."
+
+      - alert: HighErrorRate
+        expr: |
+          (
+            rate(http_requests_total{job="orchestrator",status=~"5.."}[5m])
+            /
+            rate(http_requests_total{job="orchestrator"}[5m])
+          ) > 0.05
+        for: 5m
+        labels:
+          severity: warning
+          component: orchestrator
+        annotations:
+          summary: "High error rate detected"
+          description: "Error rate is {{ $value | humanizePercentage }} (threshold: 5%)"
+
+      - alert: HighResponseTime
+        expr: |
+          histogram_quantile(0.95,
+            rate(http_request_duration_seconds_bucket{job="orchestrator"}[5m])
+          ) > 2
+        for: 10m
+        labels:
+          severity: warning
+          component: orchestrator
+        annotations:
+          summary: "High response time detected"
+          description: "p95 response time is {{ $value }}s (threshold: 2s)"
+
+      - alert: SkillRegistryIncomplete
+        expr: skill_registry_total < 80
+        for: 5m
+        labels:
+          severity: critical
+          component: skills
+        annotations:
+          summary: "Skill registry incomplete"
+          description: "Expected 80+ skills, found {{ $value }}"
+
+  - name: memory_alerts
+    interval: 30s
+    rules:
+      - alert: LowMemoryCacheHitRate
+        expr: |
+          rate(memory_cache_hits_total[5m])
+          /
+          rate(memory_cache_requests_total[5m]) < 0.5
+        for: 15m
+        labels:
+          severity: warning
+          component: memory
+        annotations:
+          summary: "Low memory cache hit rate"
+          description: "Cache hit rate is {{ $value | humanizePercentage }} (threshold: 50%)"
+
+      - alert: MemoryOperationFailures
+        expr: rate(memory_operations_total{status="failed"}[5m]) > 0.1
+        for: 5m
+        labels:
+          severity: warning
+          component: memory
+        annotations:
+          summary: "Memory operation failures detected"
+          description: "{{ $value }} memory operations failing per second"
+
+      - alert: TokenReductionDegraded
+        expr: memory_token_reduction_percent < 70
+        for: 10m
+        labels:
+          severity: warning
+          component: memory
+        annotations:
+          summary: "Token reduction below expected threshold"
+          description: "Token reduction is {{ $value }}% (expected: 90%)"
+
+  - name: agent_alerts
+    interval: 30s
+    rules:
+      - alert: NoActiveAgents
+        expr: sum(agent_active_total) == 0
+        for: 5m
+        labels:
+          severity: critical
+          component: agents
+        annotations:
+          summary: "No active agents detected"
+          description: "All agents appear to be offline or inactive"
+
+      - alert: HighAgentFailureRate
+        expr: |
+          rate(agent_executions_total{status="failed"}[5m])
+          /
+          rate(agent_executions_total[5m]) > 0.2
+        for: 10m
+        labels:
+          severity: warning
+          component: agents
+        annotations:
+          summary: "High agent failure rate"
+          description: "Agent failure rate is {{ $value | humanizePercentage }} (threshold: 20%)"
+
+      - alert: CollectiveIntelligenceDegraded
+        expr: collective_intelligence_score < 0.6
+        for: 15m
+        labels:
+          severity: warning
+          component: agents
+        annotations:
+          summary: "Collective intelligence score degraded"
+          description: "CI score is {{ $value }} (threshold: 0.6)"
+
+  - name: workflow_alerts
+    interval: 30s
+    rules:
+      - alert: HighWorkflowFailureRate
+        expr: |
+          rate(workflow_executions_total{status="failed"}[5m])
+          /
+          rate(workflow_executions_total[5m]) > 0.1
+        for: 10m
+        labels:
+          severity: warning
+          component: workflows
+        annotations:
+          summary: "High workflow failure rate"
+          description: "Workflow failure rate is {{ $value | humanizePercentage }} (threshold: 10%)"
+
+      - alert: LongWorkflowDuration
+        expr: |
+          rate(workflow_duration_seconds_sum[5m])
+          /
+          rate(workflow_duration_seconds_count[5m]) > 300
+        for: 15m
+        labels:
+          severity: warning
+          component: workflows
+        annotations:
+          summary: "Workflows taking too long to complete"
+          description: "Average workflow duration is {{ $value }}s (threshold: 300s)"
+
+  - name: database_alerts
+    interval: 30s
+    rules:
+      - alert: DatabaseDown
+        expr: up{job="postgres"} == 0
+        for: 2m
+        labels:
+          severity: critical
+          component: database
+        annotations:
+          summary: "PostgreSQL database is down"
+          description: "The PostgreSQL database has been down for more than 2 minutes"
+
+      - alert: HighDatabaseConnections
+        expr: db_connections_active / db_connections_max > 0.8
+        for: 5m
+        labels:
+          severity: warning
+          component: database
+        annotations:
+          summary: "High database connection usage"
+          description: "Database connections at {{ $value | humanizePercentage }} of max"
+
+      - alert: SlowDatabaseQueries
+        expr: |
+          histogram_quantile(0.95,
+            rate(db_query_duration_seconds_bucket[5m])
+          ) > 5
+        for: 10m
+        labels:
+          severity: warning
+          component: database
+        annotations:
+          summary: "Slow database queries detected"
+          description: "p95 query duration is {{ $value }}s (threshold: 5s)"
+
+      - alert: VectorSearchSlow
+        expr: |
+          histogram_quantile(0.95,
+            rate(vector_search_duration_seconds_bucket[5m])
+          ) > 3
+        for: 10m
+        labels:
+          severity: warning
+          component: database
+        annotations:
+          summary: "Vector search queries are slow"
+          description: "p95 vector search duration is {{ $value }}s (threshold: 3s)"
+
+  - name: redis_alerts
+    interval: 30s
+    rules:
+      - alert: RedisDown
+        expr: up{job="redis"} == 0
+        for: 2m
+        labels:
+          severity: critical
+          component: redis
+        annotations:
+          summary: "Redis is down"
+          description: "Redis has been down for more than 2 minutes"
+
+      - alert: HighRedisMemoryUsage
+        expr: redis_memory_used_bytes / redis_memory_max_bytes > 0.9
+        for: 5m
+        labels:
+          severity: warning
+          component: redis
+        annotations:
+          summary: "High Redis memory usage"
+          description: "Redis memory usage at {{ $value | humanizePercentage }} of max"
+
+      - alert: RedisConnectionSpike
+        expr: rate(redis_connections_received_total[1m]) > 100
+        for: 5m
+        labels:
+          severity: warning
+          component: redis
+        annotations:
+          summary: "Redis connection spike detected"
+          description: "{{ $value }} new connections per second"
+
+  - name: security_alerts
+    interval: 30s
+    rules:
+      - alert: PIIDetectionFailure
+        expr: rate(pii_detection_failures_total[5m]) > 0
+        for: 1m
+        labels:
+          severity: critical
+          component: security
+        annotations:
+          summary: "PII detection system failure"
+          description: "PII detection is failing - potential compliance violation"
+
+      - alert: UnauthorizedAccessAttempts
+        expr: rate(http_requests_total{status="401"}[5m]) > 10
+        for: 5m
+        labels:
+          severity: warning
+          component: security
+        annotations:
+          summary: "High rate of unauthorized access attempts"
+          description: "{{ $value }} unauthorized attempts per second"
+
+      - alert: RateLimitExceeded
+        expr: rate(rate_limit_exceeded_total[5m]) > 5
+        for: 5m
+        labels:
+          severity: info
+          component: security
+        annotations:
+          summary: "Rate limit frequently exceeded"
+          description: "{{ $value }} rate limit violations per second"
+
+  - name: system_alerts
+    interval: 30s
+    rules:
+      - alert: HighCPUUsage
+        expr: |
+          100 - (avg by (instance) (rate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 80
+        for: 10m
+        labels:
+          severity: warning
+          component: system
+        annotations:
+          summary: "High CPU usage detected"
+          description: "CPU usage is {{ $value }}% on {{ $labels.instance }}"
+
+      - alert: HighMemoryUsage
+        expr: |
+          (1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)) * 100 > 85
+        for: 10m
+        labels:
+          severity: warning
+          component: system
+        annotations:
+          summary: "High memory usage detected"
+          description: "Memory usage is {{ $value }}% on {{ $labels.instance }}"
+
+      - alert: DiskSpaceLow
+        expr: |
+          (node_filesystem_avail_bytes{fstype!~"tmpfs|fuse.lxcfs"} / node_filesystem_size_bytes) * 100 < 15
+        for: 10m
+        labels:
+          severity: warning
+          component: system
+        annotations:
+          summary: "Low disk space"
+          description: "Disk space at {{ $value }}% on {{ $labels.instance }}:{{ $labels.mountpoint }}"
