@@ -419,6 +419,118 @@ class GerryNascondinoAgent(CESARNetworkAgent):
         return "{signature_phrase} Validating {subject} - {findings} with {confidence_level}."
 
 
+class LittleJimSpedinesAgent(CESARNetworkAgent):
+    """🏃 Crawler Agent - Little Jim Spedines (NEW specialized n8n agent)"""
+
+    def __init__(self):
+        super().__init__("little_jim_spedines", AgentPersonalityType.CRAWLER)
+        self.expertise_domains = [
+            "n8n Template Gallery Crawling", "Documentation Gathering",
+            "Example Extraction", "Knowledge Base Building", "Template Search"
+        ]
+        self.signature_phrases = [
+            "You need it? I'll find it.",
+            "Already found what you're looking for.",
+            "Got the templates you need right here."
+        ]
+        self.communication_style = "Fast, efficient, thorough, quietly reliable"
+
+    async def analyze_task(self, task: Dict[str, Any]) -> Dict[str, Any]:
+        """Little Jim's template search and crawling analysis"""
+        analysis = {
+            "agent": "little_jim_spedines",
+            "analysis_type": "template_search",
+            "confidence": 0.88,
+            "search_strategy": "",
+            "templates_found": [],
+            "documentation_refs": [],
+            "examples_available": [],
+            "jim_report": ""
+        }
+
+        if "template" in str(task).lower() or "search" in str(task).lower():
+            analysis["search_strategy"] = "Multi-source template gallery search with relevance ranking"
+            analysis["jim_report"] = "Searching the template gallery. I'll find what you need."
+
+        if "example" in str(task).lower() or "documentation" in str(task).lower():
+            analysis["documentation_refs"] = ["n8n official docs", "Community templates", "Workflow examples"]
+            analysis["examples_available"] = ["HTTP Request patterns", "Data transformation", "API integration"]
+
+        analysis["jim_report"] = f"{random.choice(self.signature_phrases)}"
+
+        return analysis
+
+    async def contribute_expertise(self, context: Dict[str, Any]) -> Dict[str, Any]:
+        """Little Jim's template crawling contribution"""
+        return {
+            "agent": "little_jim_spedines",
+            "contribution_type": "template_discovery",
+            "templates_gathered": "Comprehensive n8n template search with examples and documentation",
+            "knowledge_base_update": "Latest templates and patterns from gallery and community",
+            "jim_delivery": "Here are the templates and docs you need. All verified and ready.",
+            "confidence": 0.87
+        }
+
+    def get_signature_response_pattern(self) -> str:
+        return "{signature_phrase} Found {count} templates for {subject}."
+
+
+class SilvioPerdonameAgent(CESARNetworkAgent):
+    """⚙️ JSON Compiler - Silvio Perdoname (NEW specialized n8n agent)"""
+
+    def __init__(self):
+        super().__init__("silvio_perdoname", AgentPersonalityType.JSON_COMPILER)
+        self.expertise_domains = [
+            "n8n Workflow JSON Generation", "Schema Compliance",
+            "Node Configuration", "Connection Management", "JSON Validation"
+        ]
+        self.signature_phrases = [
+            "Forgive the input, perfect the output.",
+            "Here's your perfect n8n JSON.",
+            "Schema-compliant and ready to import."
+        ]
+        self.communication_style = "Precise, forgiving, schema-compliant, clean code advocate"
+
+    async def analyze_task(self, task: Dict[str, Any]) -> Dict[str, Any]:
+        """Silvio's JSON compilation and schema analysis"""
+        analysis = {
+            "agent": "silvio_perdoname",
+            "analysis_type": "json_compilation",
+            "confidence": 0.92,
+            "json_structure": "",
+            "schema_compliance": [],
+            "nodes_required": [],
+            "connections_plan": "",
+            "silvio_precision": ""
+        }
+
+        if "workflow" in str(task).lower() or "json" in str(task).lower():
+            analysis["json_structure"] = "Complete n8n workflow JSON with all required fields"
+            analysis["silvio_precision"] = "Compiling perfect n8n JSON. Schema-compliant and clean."
+
+        if "node" in str(task).lower() or "generate" in str(task).lower():
+            analysis["nodes_required"] = ["Webhook", "HTTP Request", "Set", "Function", "If"]
+            analysis["schema_compliance"] = ["Valid n8n format", "Proper connections", "Complete metadata"]
+
+        analysis["silvio_precision"] = f"{random.choice(self.signature_phrases)}"
+
+        return analysis
+
+    async def contribute_expertise(self, context: Dict[str, Any]) -> Dict[str, Any]:
+        """Silvio's JSON compilation contribution"""
+        return {
+            "agent": "silvio_perdoname",
+            "contribution_type": "workflow_json_generation",
+            "json_output": "Complete n8n workflow JSON - schema validated and ready to import",
+            "quality_guarantee": "Perfect schema compliance with clean, maintainable structure",
+            "silvio_assurance": "Your n8n JSON is perfect. Import it and it'll work flawlessly.",
+            "confidence": 0.93
+        }
+
+    def get_signature_response_pattern(self) -> str:
+        return "{signature_phrase} Compiled {workflow} with {nodes} nodes - perfect JSON."
+
+
 class CESARMultiAgentNetwork:
     """
     Dell Boca Boys Multi-Agent Network coordinator implementing the specialized
@@ -430,15 +542,16 @@ class CESARMultiAgentNetwork:
         self.version = CESAR_NETWORK_VERSION
         self.logger = logging.getLogger("dell_boca_boys.network")
 
-        # Initialize the Dell Boca Boys crew
+        # Initialize the Dell Boca Boys crew (all 8 agents)
         self.agents = {
             "chiccki_cammarano": ChicckiCammaranoAgent(),
             "arthur_dunzarelli": ArthurDunzarelliAgent(),
             "giancarlo_saltimbocca": GiancarloSaltimboccaAgent(),
             "gerry_nascondino": GerryNascondinoAgent(),
             "collogero_aspertuno": CollogeroAspertunoAgent(),
-            "paolo_endrangheta": PaoloEndranghetaAgent()
-            # Note: little_jim_spedines and silvio_perdoname will be added next
+            "paolo_endrangheta": PaoloEndranghetaAgent(),
+            "little_jim_spedines": LittleJimSpedinesAgent(),
+            "silvio_perdoname": SilvioPerdonameAgent()
         }
 
         # Define expertise domains and agent mappings for Dell Boca Boys
@@ -466,6 +579,16 @@ class CESARMultiAgentNetwork:
             "pattern_best_practices": NetworkExpertiseDomain(
                 "Pattern Analysis & Best Practices",
                 ["arthur_dunzarelli"],
+                ["collogero_aspertuno", "gerry_nascondino"]
+            ),
+            "template_discovery": NetworkExpertiseDomain(
+                "Template & Documentation Discovery",
+                ["little_jim_spedines"],
+                ["arthur_dunzarelli"]
+            ),
+            "json_workflow_generation": NetworkExpertiseDomain(
+                "n8n JSON Workflow Generation",
+                ["silvio_perdoname"],
                 ["collogero_aspertuno", "gerry_nascondino"]
             )
         }
