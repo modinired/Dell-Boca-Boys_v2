@@ -1,0 +1,53 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: dell-boca-boys-v2
+
+bases:
+  - ../../base
+
+# GCP-specific patches and additions
+patchesStrategicMerge:
+  - deployment-patch.yaml
+  - service-patch.yaml
+
+resources:
+  - workload-identity.yaml
+  - cloud-sql-proxy.yaml
+  - managed-certificate.yaml
+  - backend-config.yaml
+
+configMapGenerator:
+  - name: database-config
+    literals:
+      - host=127.0.0.1  # Cloud SQL Proxy
+      - port=5432
+      - database=dell_boca_boys
+  - name: redis-config
+    literals:
+      - host=REDIS_HOST  # Replace with actual Memorystore host
+      - port=6379
+  - name: app-config
+    literals:
+      - n8n-url=http://n8n:5678
+
+secretGenerator:
+  - name: database-credentials
+    literals:
+      - username=dbuser
+      - password=REPLACE_WITH_SECRET_MANAGER_REF  # Use External Secrets Operator
+  - name: n8n-credentials
+    literals:
+      - api-token=REPLACE_WITH_SECRET_MANAGER_REF
+      - encryption-key=REPLACE_WITH_SECRET_MANAGER_REF
+
+images:
+  - name: dell-boca-boys-api
+    newName: gcr.io/PROJECT_ID/dell-boca-boys-api
+    newTag: latest
+  - name: dell-boca-boys-webui
+    newName: gcr.io/PROJECT_ID/dell-boca-boys-webui
+    newTag: latest
+
+commonAnnotations:
+  cloud.google.com/neg: '{"ingress": true}'

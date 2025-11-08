@@ -1,0 +1,20 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: dell-boca-boys-v2
+
+resources:
+  - namespace.yaml
+  - deployment.yaml
+  - service.yaml
+  - ingress.yaml
+  - secrets.yaml
+  - configmap.yaml
+  - hpa.yaml
+  - network-policy.yaml
+
+commonLabels:
+  app.kubernetes.io/name: dell-boca-boys
+  app.kubernetes.io/version: "2.0.0"
+  app.kubernetes.io/component: ai-workflow-automation
+  app.kubernetes.io/managed-by: kustomize
