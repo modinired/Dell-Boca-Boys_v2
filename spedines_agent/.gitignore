@@ -1,0 +1,75 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual environments
+venv/
+env/
+ENV/
+.venv
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Environment and secrets
+.env
+*.key
+*.pem
+*.json
+!requirements.json
+config/*.json
+config/service-account.json
+
+# Data and logs
+data/chromadb/
+data/drive_ingestion/
+data/*.db
+logs/*.log
+logs/*.txt
+*.log
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb
+
+# Model files
+models/
+*.pt
+*.pth
+*.onnx
+*.pkl
+
+# Temporary files
+*.tmp
+*.bak
+.cache/
