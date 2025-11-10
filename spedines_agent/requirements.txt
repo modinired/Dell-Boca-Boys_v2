@@ -1,0 +1,189 @@
+# Spedines Agent - Python Dependencies
+# Install with: pip install -r requirements.txt
+
+# =============================================================================
+# CORE FRAMEWORK
+# =============================================================================
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+pydantic==2.5.0
+pydantic-settings==2.1.0
+python-dotenv==1.0.0
+python-multipart==0.0.6
+
+# =============================================================================
+# LLM CLIENTS
+# =============================================================================
+openai==1.3.7  # For OpenAI-compatible endpoints (Ollama, vLLM)
+google-generativeai==0.3.1  # Google Gemini
+anthropic==0.7.7  # Optional: Claude support
+
+# =============================================================================
+# MEMORY & EMBEDDINGS
+# =============================================================================
+chromadb==0.4.18
+sentence-transformers==2.2.2
+numpy==1.24.3
+faiss-cpu==1.7.4  # Optional: Alternative vector store
+
+# =============================================================================
+# GOOGLE CLOUD INTEGRATION
+# =============================================================================
+google-api-python-client==2.108.0
+google-auth==2.23.4
+google-auth-httplib2==0.1.1
+google-auth-oauthlib==1.1.0
+gspread==5.12.0
+PyDrive2==1.17.0
+
+# =============================================================================
+# DATA PROCESSING
+# =============================================================================
+pandas==2.1.3
+numpy==1.24.3
+pyarrow==14.0.1
+openpyxl==3.1.2
+
+# =============================================================================
+# WEB SCRAPING & DATA INGESTION
+# =============================================================================
+requests==2.31.0
+httpx==0.25.2
+beautifulsoup4==4.12.2
+feedparser==6.0.10
+arxiv==2.1.0  # arXiv API client
+yfinance==0.2.32  # Yahoo Finance
+alpha-vantage==2.3.1  # Alpha Vantage API
+
+# =============================================================================
+# FILE PROCESSING
+# =============================================================================
+PyPDF2==3.0.1
+pdfplumber==0.10.3
+python-docx==1.1.0
+python-pptx==0.6.23
+pillow==10.1.0
+pytesseract==0.3.10  # OCR for images
+
+# =============================================================================
+# ACTIVITY TRACKING
+# =============================================================================
+psutil==5.9.6  # Process and system monitoring
+pygetwindow==0.0.9  # Window management (cross-platform)
+pynput==1.7.6  # Keyboard and mouse monitoring (with consent!)
+
+# =============================================================================
+# SCHEDULING & BACKGROUND TASKS
+# =============================================================================
+APScheduler==3.10.4
+celery==5.3.4  # Optional: For distributed tasks
+redis==5.0.1  # Optional: Celery broker
+
+# =============================================================================
+# CODE EXECUTION & SANDBOXING
+# =============================================================================
+docker==6.1.3  # Docker SDK
+jupyter-client==8.6.0  # Jupyter kernel for safe execution
+RestrictedPython==6.2  # Restricted Python execution
+
+# =============================================================================
+# TRAINING & FINE-TUNING
+# =============================================================================
+torch==2.1.1  # PyTorch for fine-tuning
+transformers==4.35.2  # Hugging Face Transformers
+datasets==2.15.0
+peft==0.7.0  # Parameter-Efficient Fine-Tuning (LoRA)
+accelerate==0.25.0
+
+# =============================================================================
+# MONITORING & LOGGING
+# =============================================================================
+loguru==0.7.2  # Enhanced logging
+prometheus-client==0.19.0  # Metrics
+structlog==23.2.0  # Structured logging
+
+# =============================================================================
+# DATABASE & STORAGE
+# =============================================================================
+sqlalchemy==2.0.23  # ORM
+alembic==1.12.1  # Database migrations
+aiosqlite==0.19.0  # Async SQLite
+asyncpg==0.29.0  # Async PostgreSQL
+
+# =============================================================================
+# CACHING
+# =============================================================================
+redis==5.0.1
+diskcache==5.6.3
+cachetools==5.3.2
+
+# =============================================================================
+# SECURITY & ENCRYPTION
+# =============================================================================
+cryptography==41.0.7
+python-jose[cryptography]==3.3.0
+passlib[bcrypt]==1.7.4
+python-magic==0.4.27
+
+# =============================================================================
+# CONFIGURATION & SERIALIZATION
+# =============================================================================
+PyYAML==6.0.1
+toml==0.10.2
+orjson==3.9.10  # Fast JSON
+
+# =============================================================================
+# CLI & UI
+# =============================================================================
+click==8.1.7
+rich==13.7.0  # Beautiful terminal output
+typer==0.9.0
+prompt-toolkit==3.0.41
+
+# =============================================================================
+# TESTING & DEVELOPMENT
+# =============================================================================
+pytest==7.4.3
+pytest-asyncio==0.21.1
+pytest-cov==4.1.0
+pytest-mock==3.12.0
+httpx==0.25.2  # For async testing
+faker==20.1.0  # Test data generation
+
+# =============================================================================
+# CODE QUALITY
+# =============================================================================
+black==23.11.0  # Code formatting
+ruff==0.1.6  # Fast linter
+mypy==1.7.1  # Type checking
+pre-commit==3.5.0
+
+# =============================================================================
+# UTILITIES
+# =============================================================================
+python-dateutil==2.8.2
+pytz==2023.3
+tqdm==4.66.1  # Progress bars
+tenacity==8.2.3  # Retry logic
+validators==0.22.0
+aiofiles==23.2.1  # Async file I/O
+
+# =============================================================================
+# OPTIONAL: SPECIALIZED TOOLS
+# =============================================================================
+# langchain==0.0.340  # LLM orchestration framework
+# llama-index==0.9.13  # Data indexing for LLMs
+# guidance==0.1.8  # Prompt programming
+# instructor==0.4.5  # Structured outputs from LLMs
+
+# =============================================================================
+# PLATFORM-SPECIFIC
+# =============================================================================
+# Windows-specific
+# pywin32==306; sys_platform == 'win32'
+
+# Linux-specific
+# python-xlib==0.33; sys_platform == 'linux'
+
+# macOS-specific
+# pyobjc-framework-Quartz==10.0; sys_platform == 'darwin'
